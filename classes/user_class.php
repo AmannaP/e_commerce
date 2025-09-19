@@ -5,7 +5,7 @@ require_once '../settings/db_class.php';
 /**
  * 
  */
-class User extends db_connection
+class User extends db_conn
 {
     private $user_id;
     private $name;

@@ -1,15 +1,28 @@
 <?php
-include_once 'db_cred.php';
+require_once 'db_cred.php';
 
 /**
  *@version 1.1
  */
-if (!class_exists('db_connection')) {
-    class db_connection
+if (!class_exists('db_conn')) {
+    class db_conn
     {
         //properties
         public $db = null;
         public $results = null;
+
+        public function __construct() {
+        try {
+            $this->db = new PDO(
+                "mysql:host=" . DB_SERVER . ";dbname=" . DB_NAME,
+                DB_USERNAME,
+                DB_PASSWORD
+            );
+            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            die("DB Connection failed: " . $e->getMessage());
+        }
+        }
 
         //connect
         /**

@@ -131,7 +131,7 @@
                         <div class="alert alert-info text-center">Login successful!</div>
                         -->
 
-                        <form method="POST" action="" class="mt-4" id="login-form">
+                        <form method="POST" action="login.js" class="mt-4" id="login-form">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email <i class="fa fa-envelope"></i></label>
                                 <input type="email" class="form-control animate__animated animate__fadeInUp" id="email" name="email" required>
