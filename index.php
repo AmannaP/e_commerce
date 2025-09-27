@@ -1,5 +1,5 @@
 <?php
-require_once 'Settings/core.php';
+require_once 'settings/core.php';
 ?>
 
 <!DOCTYPE html>

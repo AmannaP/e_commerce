@@ -1,5 +1,5 @@
 <?php
-require_once '../Settings/core.php';
+require_once '../settings/core.php';
 require_once '../controllers/category_controller.php';
 
 header('Content-Type: application/json');
