@@ -1,3 +1,7 @@
+<?php
+require_once 'Settings/core.php';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,14 +28,29 @@
 
 	<div class="menu-tray">
 		<span class="me-2">Menu:</span>
-		<a href="login/register.php" class="btn btn-sm btn-outline-primary">Register</a>
-		<a href="login/login.php" class="btn btn-sm btn-outline-secondary">Login</a>
+		<?php if (!isLoggedIn()): ?>
+			<a href="login/register.php" class="btn btn-sm btn-outline-primary">Register</a>
+			<a href="login/login.php" class="btn btn-sm btn-outline-secondary">Login</a>
+		<?php else: ?>
+			<a href="Settings/logout.php" class="btn btn-sm btn-outline-danger">Logout</a>
+			<?php if (isAdmin()): ?>
+				<a href="admin/category.php" class="btn btn-sm btn-outline-success">Category</a>
+			<?php endif; ?>
+		<?php endif; ?>
 	</div>
 
 	<div class="container" style="padding-top:120px;">
 		<div class="text-center">
 			<h1>Welcome</h1>
-			<p class="text-muted">Use the menu in the top-right to Register or Login.</p>
+			<p class="text-muted">
+				<?php if (!isLoggedIn()): ?>
+					Use the menu in the top-right to Register or Login.
+				<?php elseif (isAdmin()): ?>
+					Welcome, Admin! Use the Category page to manage products.
+				<?php else: ?>
+					Welcome back, <?php echo htmlspecialchars($_SESSION['name'] ?? 'User'); ?>.
+				<?php endif; ?>
+			</p>
 		</div>
 	</div>
 
