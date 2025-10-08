@@ -32,7 +32,11 @@ if (!class_exists('db_conn')) {
         function db_connect()
         {
             //connection
+<<<<<<< HEAD
             $this->db = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
+=======
+            $this->db = mysqli_connect(SERVER, USERNAME, PASSWD, DATABASE);
+>>>>>>> ccf60bc0925d5da4c196d7ac0a7fd89ac8dc8f46
 
             //test the connection
             if (mysqli_connect_errno()) {
@@ -45,7 +49,11 @@ if (!class_exists('db_conn')) {
         function db_conn()
         {
             //connection
+<<<<<<< HEAD
             $this->db = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
+=======
+            $this->db = mysqli_connect(SERVER, USERNAME, PASSWD, DATABASE);
+>>>>>>> ccf60bc0925d5da4c196d7ac0a7fd89ac8dc8f46
 
             //test the connection
             if (mysqli_connect_errno()) {

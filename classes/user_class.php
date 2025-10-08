@@ -3,7 +3,11 @@
 require_once '../settings/db_class.php';
 
 /**
+<<<<<<< HEAD
  * User class for handling user-related operations
+=======
+ * 
+>>>>>>> ccf60bc0925d5da4c196d7ac0a7fd89ac8dc8f46
  */
 class User extends db_conn
 {

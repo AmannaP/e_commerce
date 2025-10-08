@@ -2,7 +2,11 @@ $(document).ready(function() {
     $('#register-form').submit(function(e) {
         e.preventDefault();
 
+<<<<<<< HEAD
         fullName = $('#name').val();
+=======
+        name = $('#name').val();
+>>>>>>> ccf60bc0925d5da4c196d7ac0a7fd89ac8dc8f46
         email = $('#email').val();
         password = $('#password').val();
         country = $('#country').val();
@@ -10,7 +14,11 @@ $(document).ready(function() {
         phone_number = $('#phone_number').val();
         role = $('input[name="role"]:checked').val();
 
+<<<<<<< HEAD
         if (fullName == '' || email == '' || password == '' || phone_number == '' || country == '' || city == '') {
+=======
+        if (name == '' || email == '' || password == '' || phone_number == '' || country == '' || city == '') {
+>>>>>>> ccf60bc0925d5da4c196d7ac0a7fd89ac8dc8f46
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
@@ -33,7 +41,11 @@ $(document).ready(function() {
             type: 'POST',
             dataType: 'json',
             data: {
+<<<<<<< HEAD
                 name: fullName,
+=======
+                name: name,
+>>>>>>> ccf60bc0925d5da4c196d7ac0a7fd89ac8dc8f46
                 email: email,
                 password: password,
                 country: country,

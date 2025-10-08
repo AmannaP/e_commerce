@@ -33,6 +33,7 @@ $(document).ready(function () {
                         text: response.message,
                     }).then((result) => {
                         if (result.isConfirmed) {
+<<<<<<< HEAD
                             // Redirect based on user role
                             if (response.role === '2' || response.role === 2) {
                                 // Admin
@@ -41,6 +42,9 @@ $(document).ready(function () {
                                 // Regular customer
                                 window.location.href = '../index.php';
                             }
+=======
+                            window.location.href = '../index.php';
+>>>>>>> ccf60bc0925d5da4c196d7ac0a7fd89ac8dc8f46
                         }
                     });
                 } else {
