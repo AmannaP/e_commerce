@@ -126,14 +126,6 @@
                         <h4>Login</h4>
                     </div>
                     <div class="card-body">
-<<<<<<< HEAD
-=======
-                        <!-- Alert Messages (To be handled by backend) -->
-                        <!-- Example:
-                        <div class="alert alert-info text-center">Login successful!</div>
-                        -->
-
->>>>>>> ccf60bc0925d5da4c196d7ac0a7fd89ac8dc8f46
                         <form method="POST" action="login.js" class="mt-4" id="login-form">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email <i class="fa fa-envelope"></i></label>

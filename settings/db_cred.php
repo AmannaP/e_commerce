@@ -21,10 +21,6 @@ if (!defined("DB_PASSWORD")) {
 }
 
 if (!defined("DB_NAME")) {
-<<<<<<< HEAD
-=======
-    // Use the database name from the provided SQL dump
->>>>>>> ccf60bc0925d5da4c196d7ac0a7fd89ac8dc8f46
     define("DB_NAME", "dbforlab");
 }
 ?>

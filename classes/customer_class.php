@@ -10,11 +10,7 @@ class Customer extends db_conn {
         $stmt->execute([$email]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-<<<<<<< HEAD
     
-=======
->>>>>>> ccf60bc0925d5da4c196d7ac0a7fd89ac8dc8f46
-
     public function verifyPassword($email, $password) {
         $customer = $this->getCustomerByEmail($email);
         if ($customer && password_verify($password, $customer['customer_pass'])) {

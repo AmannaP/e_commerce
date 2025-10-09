@@ -80,11 +80,7 @@
         .custom-radio .form-check-input:checked+.form-check-label::before {
             background-color: #D19C97;
             border-color: #D19C97;
-<<<<<<< HEAD
         } 
-=======
-        }
->>>>>>> ccf60bc0925d5da4c196d7ac0a7fd89ac8dc8f46
 
         .form-check-label {
             position: relative;
@@ -109,7 +105,6 @@
         .form-check-input:focus+.form-check-label::before {
             box-shadow: 0 0 0 0.2rem rgba(209, 156, 151, 0.5);
         }
-<<<<<<< HEAD
         .form-check-input {
             position: absolute;
             opacity: 0; /* hide the real radio */
@@ -119,8 +114,6 @@
             background-color: #D19C97;
             border-color: #D19C97;
         }
-=======
->>>>>>> ccf60bc0925d5da4c196d7ac0a7fd89ac8dc8f46
 
         .animate-pulse-custom {
             animation: pulse 2s infinite;
@@ -151,11 +144,7 @@
                         <h4>Register</h4>
                     </div>
                     <div class="card-body">
-<<<<<<< HEAD
                         <form method="POST" action="register-form" class="mt-4" id="register-form">
-=======
-                        <form method="POST" action="register.js" class="mt-4" id="register-form">
->>>>>>> ccf60bc0925d5da4c196d7ac0a7fd89ac8dc8f46
                             <div class="mb-3">
                                 <label for="name" class="form-label">Full Name <i class="fa fa-user"></i></label>
                                 <input type="text" class="form-control animate__animated animate__fadeInUp" id="name" name="name" required>
@@ -244,27 +233,15 @@
                             <div class="mb-4">
                                 <label class="form-label">Register As</label>
                                 <div class="d-flex justify-content-start">
-<<<<<<< HEAD
                                     <div class="form-check me-3">
                                         <input class="form-check-input" type="radio" name="role" id="customer" value="1" checked>
                                         <label class="form-check-label" for="customer">Customer</label>
                                     </div>
                                     <div class="form-check">
-=======
-                                    <div class="form-check me-3 custom-radio">
-                                        <input class="form-check-input" type="radio" name="role" id="customer" value="1" checked>
-                                        <label class="form-check-label" for="customer">Customer</label>
-                                    </div>
-                                    <div class="form-check custom-radio">
->>>>>>> ccf60bc0925d5da4c196d7ac0a7fd89ac8dc8f46
                                         <input class="form-check-input" type="radio" name="role" id="owner" value="2">
                                         <label class="form-check-label" for="owner">Restaurant Owner</label>
                                     </div>
                                 </div>
-<<<<<<< HEAD
-
-=======
->>>>>>> ccf60bc0925d5da4c196d7ac0a7fd89ac8dc8f46
                             </div>
                             <button type="submit" class="btn btn-custom w-100 animate-pulse-custom">Register</button>
                         </form>
