@@ -14,10 +14,7 @@ ob_start();
  * @return bool
  */
 function checkLogin() {
-    if (!isset($_SESSION['id']) && empty($_SESSION['id'])) {
-        header("Location: ../login/login.php");
-        exit;
-    }
+   return isset($_SESSION['id']);
 }
 
 /**
@@ -34,12 +31,9 @@ function requireLogin(): void {
  * Check if current user is an admin
  * @return bool
  */
-function isAdmin(): bool {
+function isAdmin() {
 
-    if (checkLogin() && isset($_SESSION['role']) && $_SESSION['role'] === '2'){
-        return true;
-    }
-    return false;
+   return isset($_SESSION['role']) && (int)$_SESSION['role'] === 2;
 }
 
 /**
@@ -47,7 +41,7 @@ function isAdmin(): bool {
  */
 function requireAdmin(): void {
     if (!isAdmin()) {
-        header("Location: ../admin/category.php");
+        header("Location: /register_sample/login/login.php");
         exit;
     }
 }

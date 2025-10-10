@@ -1,11 +1,9 @@
 <?php
-// Ensure session + security
 require_once '../settings/core.php';
 require_once '../controllers/category_controller.php';
 
 header('Content-Type: application/json');
 
-// Check if user is logged in
 if (!checkLogin()) {
     echo json_encode([
         "status" => "error",
@@ -14,10 +12,7 @@ if (!checkLogin()) {
     exit;
 }
 
-$user_id = $_SESSION['id'];
-
-// Fetch categories created by this user
-$categories = fetch_categories_ctr($user_id);
+$categories = fetch_categories_ctr();
 
 if ($categories && count($categories) > 0) {
     echo json_encode([
@@ -28,6 +23,8 @@ if ($categories && count($categories) > 0) {
     echo json_encode([
         "status" => "success",
         "categories" => [],
-        "message" => "No categories found for this user."
+        "message" => "No categories found."
     ]);
 }
+exit;
+?>
