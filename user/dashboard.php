@@ -3,13 +3,13 @@ require_once '../settings/core.php';
 
 // Ensure user is logged in
 if (!checkLogin()) {
-    header("Location: /register_sample/login/login.php");
+    header("Location: ../login/login.php");
     exit();
 }
 
 // If the user is an admin, redirect to admin dashboard
 if (isAdmin()) {
-    header("Location: /register_sample/admin/dashboard.php");
+    header("Location: ../admin/dashboard.php");
     exit();
 }
 ?>
@@ -62,7 +62,7 @@ if (isAdmin()) {
         <span class="navbar-text text-white me-3">
             Welcome, <?= htmlspecialchars($_SESSION['name']); ?> 💜
         </span>
-        <a href="/register_sample/login/logout.php" class="btn btn-outline-light btn-sm">Logout</a>
+        <a href="../login/logout.php" class="btn btn-outline-light btn-sm">Logout</a>
     </div>
   </div>
 </nav>
@@ -81,7 +81,8 @@ if (isAdmin()) {
             <div class="card dashboard-card p-4 text-center">
                 <h5>📢 Report an Incident</h5>
                 <p>If you or someone you know is in danger or has experienced GBV, report it confidentially.</p>
-                <a href="/register_sample/user/report_incident.php" class="btn btn-custom mt-2">Report Now</a>
+                <a href="#" class="btn btn-secondary w-100 disabled">Feature Coming Soon</a>
+<!--                <a href="/register_sample/user/report_incident.php" class="btn btn-custom mt-2">Report Now</a> -->
             </div>
         </div>
 
@@ -90,7 +91,8 @@ if (isAdmin()) {
             <div class="card dashboard-card p-4 text-center">
                 <h5>🤝 Find Support Services</h5>
                 <p>Browse available support services including counseling, legal aid, and shelters near you.</p>
-                <a href="/register_sample/user/find_services.php" class="btn btn-custom mt-2">View Services</a>
+                <a href="#" class="btn btn-secondary w-100 disabled">Feature Coming Soon</a>
+<!--                <a href="/register_sample/user/find_services.php" class="btn btn-custom mt-2">View Services</a>  -->
             </div>
         </div>
 
@@ -99,7 +101,8 @@ if (isAdmin()) {
             <div class="card dashboard-card p-4 text-center">
                 <h5>💬 Chat with a Counselor</h5>
                 <p>Get emotional or psychological support through our chat system with certified counselors.</p>
-                <a href="/register_sample/user/chat.php" class="btn btn-custom mt-2">Start Chat</a>
+                <a href="#" class="btn btn-secondary w-100 disabled">Feature Coming Soon</a>
+<!--                <a href="/register_sample/user/chat.php" class="btn btn-custom mt-2">Start Chat</a>  -->
             </div>
         </div>
 
@@ -108,7 +111,8 @@ if (isAdmin()) {
             <div class="card dashboard-card p-4 text-center">
                 <h5>🛡️ Safety Resources</h5>
                 <p>Learn about protection strategies, emergency contacts, and community-based support.</p>
-                <a href="/register_sample/user/resources.php" class="btn btn-custom mt-2">Access Resources</a>
+                <a href="#" class="btn btn-secondary w-100 disabled">Feature Coming Soon</a>
+<!--                <a href="/register_sample/user/resources.php" class="btn btn-custom mt-2">Access Resources</a>  -->
             </div>
         </div>
 
@@ -117,7 +121,8 @@ if (isAdmin()) {
             <div class="card dashboard-card p-4 text-center">
                 <h5>👤 My Profile</h5>
                 <p>Update your profile, view your reports, and manage your preferences securely.</p>
-                <a href="/register_sample/user/profile.php" class="btn btn-custom mt-2">Manage Profile</a>
+                <a href="#" class="btn btn-secondary w-100 disabled">Feature Coming Soon</a>
+<!--                <a href="/register_sample/user/profile.php" class="btn btn-custom mt-2">Manage Profile</a>  -->
             </div>
         </div>
 
@@ -126,7 +131,8 @@ if (isAdmin()) {
             <div class="card dashboard-card p-4 text-center">
                 <h5>📞 Contact Support</h5>
                 <p>Reach out to GBVAid’s help desk if you need immediate assistance or follow-up.</p>
-                <a href="/register_sample/user/support.php" class="btn btn-custom mt-2">Contact Us</a>
+                <a href="#" class="btn btn-secondary w-100 disabled">Feature Coming Soon</a>
+<!--                <a href="/register_sample/user/support.php" class="btn btn-custom mt-2">Contact Us</a>  -->
             </div>
         </div>
 

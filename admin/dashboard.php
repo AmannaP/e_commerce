@@ -67,7 +67,7 @@ requireAdmin();
                 <span class="text-white me-3">
                     👋 <?= htmlspecialchars($_SESSION['name']); ?>
                 </span>
-                <a href="/register_sample/login/logout.php" class="btn btn-outline-light btn-sm">Logout</a>
+                <a href="../login/logout.php" class="btn btn-outline-light btn-sm">Logout</a>
             </div>
         </div>
     </nav>
@@ -87,7 +87,8 @@ requireAdmin();
                 <div class="card dashboard-card p-4 shadow-sm">
                     <h5>🛠 Manage Services</h5>
                     <p>View, create, and organize GBV support service categories such as counseling, shelters, legal aid, and emergency contacts.</p>
-                    <a href="/register_sample/admin/category.php" class="btn btn-primary w-100">Go to Services</a>
+                    <a href="#" class="btn btn-secondary w-100 disabled">Feature Coming Soon</a>
+<!--                    <a href="/register_sample/admin/category.php" class="btn btn-primary w-100">Go to Services</a> -->
                 </div>
             </div>
 

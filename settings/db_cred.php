@@ -13,14 +13,14 @@ if (!defined("DB_SERVER")) {
 }
 
 if (!defined("DB_USERNAME")) {
-    define("DB_USERNAME", "root");
+    define("DB_USERNAME", "chika.amanna");
 }
 
 if (!defined("DB_PASSWORD")) {
-    define("DB_PASSWORD", "");
+    define("DB_PASSWORD", "69Captain#");
 }
 
 if (!defined("DB_NAME")) {
-    define("DB_NAME", "dbforlab");
+    define("DB_NAME", "ecommerce_2025A_chika_amanna");
 }
 ?>
