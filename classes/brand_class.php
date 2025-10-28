@@ -10,7 +10,7 @@ class Brand extends db_conn {
     public function getAllBrands() {
         // Join categories to show category name
         $sql = "SELECT b.brand_id, b.brand_name, c.cat_name 
-                FROM brand b 
+                FROM brands b 
                 LEFT JOIN categories c ON b.cat_id = c.cat_id";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
@@ -34,7 +34,7 @@ class Brand extends db_conn {
                 ];
             }
 
-            $sql = "INSERT INTO brand (brand_name, cat_id) VALUES (?, ?)";
+            $sql = "INSERT INTO brands (brand_name, cat_id) VALUES (?, ?)";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$brand_name, $cat_id]);
 

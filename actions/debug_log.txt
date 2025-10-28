@@ -4,3 +4,9 @@ Array
     [cat_id] => 6
 )
 
+Array
+(
+    [brand_name] => Legal
+    [cat_id] => 4
+)
+
