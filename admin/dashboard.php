@@ -68,6 +68,8 @@ requireAdmin();
                     👋 <?= htmlspecialchars($_SESSION['name']); ?>
                 </span>
                 <a href="../login/logout.php" class="btn btn-outline-light btn-sm">Logout</a>
+                <a href="../admin/brand.php" class="btn btn-outline-light btn-sm">Brands</a>
+                <a href="../admin/category.php" class="btn btn-outline-light btn-sm">Categories</a>
             </div>
         </div>
     </nav>

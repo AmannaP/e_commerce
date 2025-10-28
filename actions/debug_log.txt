@@ -1,0 +1,6 @@
+Array
+(
+    [brand_name] => Trauma Therapy
+    [cat_id] => 6
+)
+
