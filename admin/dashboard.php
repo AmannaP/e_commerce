@@ -89,8 +89,7 @@ requireAdmin();
                 <div class="card dashboard-card p-4 shadow-sm">
                     <h5>🛠 Manage Services</h5>
                     <p>View, create, and organize GBV support service categories such as counseling, shelters, legal aid, and emergency contacts.</p>
-                    <a href="#" class="btn btn-secondary w-100 disabled">Feature Coming Soon</a>
-<!--                    <a href="/register_sample/admin/category.php" class="btn btn-primary w-100">Go to Services</a> -->
+                    <a href="../admin/product.php" class="btn btn-primary w-100">Go to Services</a>
                 </div>
             </div>
 

@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    // ✅ Validate brand name
+    // Validate brand name
     function validateBrandName(name, category) {
         if (!name || typeof name !== "string" || name.trim().length < 2) {
             Swal.fire({
@@ -20,7 +20,7 @@ $(document).ready(function () {
         return true;
     }
 
-    // ✅ Fetch all brands
+    // Fetch all brands
     function fetchBrands() {
         $.ajax({
             url: "../actions/fetch_brand_action.php",
@@ -58,9 +58,9 @@ $(document).ready(function () {
         });
     }
 
-    fetchBrands(); // ✅ Load brands when page loads
+    fetchBrands(); // Load brands when page loads
 
-    // ✅ CREATE new brand
+    // CREATE new brand
     $("#add-brand-form").submit(function (e) {
         e.preventDefault();
 
@@ -90,7 +90,7 @@ $(document).ready(function () {
         });
     });
 
-    // ✅ UPDATE brand
+    // UPDATE brand
     $(document).on("click", ".update-btn", function () {
         const brand_id = $(this).data("id");
         const oldName = $(this).data("name");
@@ -98,16 +98,22 @@ $(document).ready(function () {
         Swal.fire({
             title: "Update Brand Name",
             input: "text",
+            inputLabel: "Enter new brand name",
             inputValue: oldName,
             showCancelButton: true,
             confirmButtonText: "Update",
+            preConfirm: (value) => {
+                if (!value || value.trim().length < 2) {
+                    Swal.showValidationMessage("Please enter a valid brand name (at least 2 characters)");
+                }
+            },
         }).then((result) => {
-            if (result.isConfirmed && result.value.trim() !== "") {
+            if (result.isConfirmed) {
                 $.ajax({
                     url: "../actions/update_brand_action.php",
                     type: "POST",
                     dataType: "json",
-                    data: { brand_id, brand_name: result.value.trim() },
+                    data: { brand_id: brand_id, brand_name: result.value.trim() },
                     success: function (res) {
                         if (res.status === "success") {
                             Swal.fire("Updated!", res.message, "success").then(fetchBrands);
@@ -117,13 +123,14 @@ $(document).ready(function () {
                     },
                     error: function () {
                         Swal.fire("Error", "Server error occurred.", "error");
-                    },
+                    }
                 });
             }
         });
     });
 
-    // ✅ DELETE brand
+
+    // DELETE brand
     $(document).on("click", ".delete-btn", function () {
         const brand_id = $(this).data("id");
 

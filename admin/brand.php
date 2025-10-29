@@ -95,8 +95,8 @@ $categories = fetch_categories_ctr();
                 <tr>
                     <th>ID</th>
                     <th>Brand Name</th>
-                    <th>Update</th>
-                    <th>Delete</th>
+                    <th>Category</th>
+                    <th>Modification</th>
                 </tr>
             </thead>
             <tbody>
