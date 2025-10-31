@@ -1,7 +1,5 @@
 <?php
 // actions/add_product_action.php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
 require_once '../settings/core.php';
 require_once '../controllers/product_controller.php';
@@ -30,38 +28,55 @@ if ($cat_id <= 0 || $brand_id <= 0 || empty($title) || $price === '') {
     exit;
 }
 
-// handle image if uploaded
-$image_name = null;
-if (isset($_FILES['product_image']) && $_FILES['product_image']['error'] !== UPLOAD_ERR_NO_FILE) {
-    $img = $_FILES['product_image'];
-    // validate image
-    $allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/jpg'];
-    if (!in_array($img['type'], $allowed)) {
-        echo json_encode(["status" => "error", "message" => "Invalid image type."]);
-        exit;
-    }
-    if ($img['size'] > 4 * 1024 * 1024) {
-        echo json_encode(["status" => "error", "message" => "Image too large (max 4MB)."]);
-        exit;
-    }
+// Handle product image
+$upload_dir = "../images/products/";
+$default_image = "default.png"; 
 
-    // create images folder if missing
-    $target_dir = __DIR__ . '/../images/products/';
-    if (!is_dir($target_dir)) mkdir($target_dir, 0755, true);
+// Check if user uploaded a file
+if (isset($_FILES['product_image']) && $_FILES['product_image']['error'] === UPLOAD_ERR_OK) {
+    $file_tmp = $_FILES['product_image']['tmp_name'];
+    $file_name = basename($_FILES['product_image']['name']);
+    $target_path = $upload_dir . $file_name;
 
-    // build safe filename
-    $ext = pathinfo($img['name'], PATHINFO_EXTENSION);
-    $image_name = uniqid('prod_') . '.' . $ext;
-    $target_path = $target_dir . $image_name;
-
-    if (!move_uploaded_file($img['tmp_name'], $target_path)) {
-        echo json_encode(["status" => "error", "message" => "Failed to save image."]);
-        exit;
+    // Validate file type (optional but safe)
+    $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+    $ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+    if (in_array($ext, $allowed)) {
+        if (move_uploaded_file($file_tmp, $target_path)) {
+            $product_image = $file_name;
+        } else {
+            $product_image = $default_image;
+        }
+    } else {
+        $product_image = $default_image;
     }
+} else {
+    // No file uploaded → use default image
+    $product_image = $default_image;
 }
 
-// call controller
-$res = add_product_ctr($cat_id, $brand_id, $title, $price, $description, $image_name, $keywords, $user_id);
-echo json_encode($res);
+// Validate required fields
+if (empty($product_title) || empty($product_price)) {
+    echo json_encode(["status" => "error", "message" => "Please provide all required fields."]);
+    exit;
+}
+
+// Add product via controller
+$result = add_product_ctr(
+    $product_cat,
+    $product_brand,
+    $product_title,
+    $product_price,
+    $product_desc,
+    $product_image,
+    $product_keywords,
+    $user_id
+);
+
+if ($result) {
+    echo json_encode(["status" => "success", "message" => "Product added successfully!"]);
+} else {
+    echo json_encode(["status" => "error", "message" => "Failed to add product."]);
+}
 exit;
 ?>

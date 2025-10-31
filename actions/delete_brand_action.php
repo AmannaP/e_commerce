@@ -6,7 +6,7 @@ require_once '../controllers/brand_controller.php';
 
 header('Content-Type: application/json');
 
-// ✅ Ensure user is logged in
+// Ensure user is logged in
 if (!checkLogin()) {
     echo json_encode([
         "status" => "error",
@@ -17,11 +17,11 @@ if (!checkLogin()) {
 
 $user_id = $_SESSION['id'];
 
-// ✅ Receive brand ID or name
+// Receive brand ID or name
 $brand_id = isset($_POST['brand_id']) ? intval($_POST['brand_id']) : 0;
 $brand_name = isset($_POST['brand_name']) ? trim($_POST['brand_name']) : "";
 
-// ✅ Validate input
+// Validate input
 if ($brand_id <= 0 && empty($brand_name)) {
     echo json_encode([
         "status" => "error",
@@ -30,10 +30,10 @@ if ($brand_id <= 0 && empty($brand_name)) {
     exit;
 }
 
-// ✅ Invoke the controller function
+// Invoke the controller function
 $result = delete_brand_ctr($brand_id, $brand_name, $user_id);
 
-// ✅ Response
+// Response
 if ($result) {
     echo json_encode([
         "status" => "success",

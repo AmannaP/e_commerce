@@ -91,8 +91,7 @@ if (isAdmin()) {
             <div class="card dashboard-card p-4 text-center">
                 <h5>🤝 Find Support Services</h5>
                 <p>Browse available support services including counseling, legal aid, and shelters near you.</p>
-                <a href="#" class="btn btn-secondary w-100 disabled">Feature Coming Soon</a>
-<!--                <a href="/register_sample/user/find_services.php" class="btn btn-custom mt-2">View Services</a>  -->
+                <a href="../user/product_page.php" class="btn btn-custom mt-2">View Services</a>
             </div>
         </div>
 

@@ -8,13 +8,13 @@ require_once '../controllers/brand_controller.php';
 
 header('Content-Type: application/json');
 
-// ✅ Ensure user is logged in
+// Ensure user is logged in
 if (!checkLogin()) {
     echo json_encode(["status" => "error", "message" => "Unauthorized access."]);
     exit;
 }
 
-// ✅ Sanitize inputs
+// Sanitize inputs
 $brand_id = isset($_POST['brand_id']) ? intval($_POST['brand_id']) : 0;
 $brand_name = isset($_POST['brand_name']) ? trim($_POST['brand_name']) : '';
 
