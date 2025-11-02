@@ -2,7 +2,7 @@
 require_once '../settings/core.php';
 require_once '../controllers/category_controller.php';
 
-// ✅ Restrict access to admins only
+// Restrict access to admins only
 if (!checkLogin()) {
     header("Location: /register_sample/login/login.php");
     exit();

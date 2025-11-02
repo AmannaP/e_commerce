@@ -1,11 +1,14 @@
+// js/product.js
 
 // ================== ADMIN PRODUCT MANAGEMENT ==================
 
 $(document).ready(function () {
-    function resetForm() {
-        $('#product_id').val('');
-        $('#product-form')[0].reset();
-        $('#save-product').text('Save Product');
+     if ($("#product-form").length > 0) {
+        function resetForm() {
+            $('#product_id').val('');
+            $('#product-form')[0].reset();
+            $('#save-product').text('Save Product');
+        }
     }
 
     function fetchProducts() {
@@ -19,7 +22,9 @@ $(document).ready(function () {
 
                 if (res.status === "success" && Array.isArray(res.products) && res.products.length > 0) {
                     res.products.forEach(p => {
-                        const imgUrl = p.product_image ? `../images/products/${p.product_image}` : `../images/products/default.jpg`;
+                        const imgUrl = p.product_image
+                                ? `../uploads/products/${p.product_image}`
+                                : `../uploads/products/default.jpg`;
                         tbody.append(`
                             <tr>
                                 <td>${p.product_id}</td>
@@ -38,14 +43,14 @@ $(document).ready(function () {
                     tbody.append('<tr><td colspan="7" class="text-center text-muted">No products found.</td></tr>');
                 }
             },
-            error: function (xhr, status, error) {
-                console.error("AJAX Error:", status, error, xhr.responseText);
-                Swal.fire('Error', 'Failed to load products', 'error');
-            }
-        });
-    }
+        error: function (xhr, status, error) {
+            console.error("AJAX Error:", status, error, xhr.responseText);
+            Swal.fire('Error', 'Failed to load products', 'error');
+        }
+    });
+}
 
-    fetchProducts();
+fetchProducts();
 
     // Save (add or update)
     $('#product-form').submit(function (e) {
@@ -130,66 +135,92 @@ $(document).ready(function () {
             }
         });
     });
-});
 
-// ================== USER PRODUCT DISPLAY ==================
-$(document).ready(function() {
-    function fetchUserProducts(filters = {}) {
-        $.ajax({
-            url: "../actions/fetch_product_action.php",
-            type: "GET",
-            data: filters,
-            dataType: "json",
-            success: function(res) {
-                const container = $("#product-list");
-                container.empty();
+// ================== USER PRODUCT DISPLAY & SEARCH ==================
+if ($("#product-list").length > 0) {
+        let currentPage = 1;
 
-                if (res.status === "success" && Array.isArray(res.products) && res.products.length > 0) {
-                    res.products.forEach((p) => {
-                        const imagePath = `../images/products/${p.product_image}`;
-                        const imgUrl = (p.product_image && p.product_image.trim() !== "")
-                            ? imagePath
-                            : `../images/products/default.png`;
-                        container.append(`
-                            <div class="col-md-4">
-                                <div class="card product-card p-3 shadow-sm">
-                                    <img src="${imgUrl}" 
-                                        onerror="this.onerror=null;this.src='../images/products/default.jpg';"
-                                        class="card-img-top mb-3" 
-                                        alt="${p.product_title}" 
-                                        style="height:200px;object-fit:cover;border-radius:10px;">
-                                    <h5 class="fw-bold">${p.product_title}</h5>
-                                    <p class="text-muted mb-1"><strong>Category:</strong> ${p.cat_name}</p>
-                                    <p class="text-muted mb-1"><strong>Brand:</strong> ${p.brand_name}</p>
-                                    <p><strong>Price:</strong> GH₵${p.product_price}</p>
-                                    <a href="../views/single_product.php?id=${p.product_id}" class="btn btn-custom w-100 mt-2">View Details</a>
+        function fetchUserProducts(filters = {}, page = 1) {
+            filters.page = page;
+
+            $.ajax({
+                url: "../actions/fetch_product_action.php",
+                type: "GET",
+                data: filters,
+                dataType: "json",
+                success: function (res) {
+                    const container = $("#product-list");
+                    const pagination = $("#pagination");
+                    container.empty();
+                    pagination.empty();
+
+                    if (res.status === "success" && Array.isArray(res.products) && res.products.length > 0) {
+                        // RENDER PRODUCTS
+                        res.products.forEach((p) => {
+                            const imgUrl = p.product_image
+                                ? `../images/products/${p.product_image}`
+                                : `../images/products/default.png`;
+
+                            container.append(`
+                                <div class="col-md-4">
+                                    <div class="card product-card p-3 shadow-sm">
+                                        <img src="${imgUrl}" class="card-img-top mb-3" alt="${p.product_title}" style="height:200px;object-fit:cover;border-radius:10px;">
+                                        <h5 class="fw-bold">${p.product_title}</h5>
+                                        <p class="text-muted mb-1"><strong>Category:</strong> ${p.cat_name || '—'}</p>
+                                        <p class="text-muted mb-1"><strong>Brand:</strong> ${p.brand_name || '—'}</p>
+                                        <p><strong>Price:</strong> GH₵${p.product_price}</p>
+                                        <a href="../views/single_product.php?id=${p.product_id}" class="btn btn-custom w-100 mt-2">View Details</a>
+                                    </div>
                                 </div>
-                            </div>
-                        `);
-                    });
-                } else {
-                    container.html("<p class='text-center text-muted'>No products found.</p>");
+                            `);
+                        });
+
+                        // PAGINATION BUTTONS
+                        const totalPages = res.total_pages || 1;
+                        const current = res.current_page || 1;
+
+                        for (let i = 1; i <= totalPages; i++) {
+                            pagination.append(`
+                                <button class="pagination-btn ${i === current ? 'active' : ''}" data-page="${i}">
+                                    ${i}
+                                </button>
+                            `);
+                        }
+                    } else {
+                        container.html("<p class='text-center text-muted'>No products found.</p>");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error:", status, error, xhr.responseText);
+                    Swal.fire("Error", "Server error occurred.", "error");
                 }
-            },
-            error: function (xhr, status, error) {
-                console.error("AJAX Error:", status, error, xhr.responseText);
-                Swal.fire("Error", "Server error occurred.", "error");
-            }
+            });
+        }
+
+        // Initial load
+        fetchUserProducts();
+
+        // Pagination click
+        $(document).on('click', '.pagination-btn', function () {
+            const page = $(this).data('page');
+            currentPage = page;
+            const query = $("#search_box").val().trim();
+            const cat_id = $("#category_filter").val();
+            const brand_id = $("#brand_filter").val();
+            fetchUserProducts({ search: query, cat_id, brand_id }, currentPage);
+        });
+
+        // Search button click
+        $("#search_btn").on("click", function () {
+            const query = $("#search_box").val().trim();
+            fetchUserProducts({ search: query }, 1);
+        });
+
+        // Filter change
+        $("#category_filter, #brand_filter").on("change", function () {
+            const cat_id = $("#category_filter").val();
+            const brand_id = $("#brand_filter").val();
+            fetchUserProducts({ cat_id, brand_id }, 1);
         });
     }
-
-    // Initial load
-    fetchUserProducts();
-
-    // Search & Filter listeners
-    $("#search_btn").on("click", function() {
-        const query = $("#search_box").val().trim();
-        fetchUserProducts({ search: query });
-    });
-
-    $("#category_filter, #brand_filter").on("change", function() {
-        const cat_id = $("#category_filter").val();
-        const brand_id = $("#brand_filter").val();
-        fetchUserProducts({ cat_id, brand_id });
-    });
 });

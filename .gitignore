@@ -1,2 +1,6 @@
 db_cred.php
 db_cred1.php
+
+uploads
+*.log
+*.tmp

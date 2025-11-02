@@ -1,3 +1,5 @@
+// js/brand.js
+
 $(document).ready(function () {
     // Validate brand name
     function validateBrandName(name, category) {

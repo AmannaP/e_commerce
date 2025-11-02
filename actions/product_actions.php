@@ -1,4 +1,6 @@
 <?php
+// actions/fetch_product_action.php
+require_once '../settings/core.php';
 require_once '../controllers/product_controller.php';
 header('Content-Type: application/json');
 

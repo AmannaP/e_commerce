@@ -7,6 +7,18 @@ function fetch_products_ctr() {
     return $p->getAllProducts();
 }
 
+// Fetch products with filters and pagination
+function fetch_filtered_products_ctr($search = '', $cat_id = 0, $brand_id = 0, $limit = 9, $offset = 0) {
+    $product = new Product();
+    return $product->getFilteredProducts($search, $cat_id, $brand_id, $limit, $offset);
+}
+
+// Count total products for pagination
+function count_total_products_ctr($search = '', $cat_id = 0, $brand_id = 0) {
+    $product = new Product();
+    return $product->countFilteredProducts($search, $cat_id, $brand_id);
+}
+
 function add_product_ctr($cat_id, $brand_id, $title, $price, $description, $image_name, $keywords, $user_id = null) {
     $p = new Product();
     return $p->addProduct($cat_id, $brand_id, $title, $price, $description, $image_name, $keywords, $user_id);

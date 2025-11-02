@@ -1,4 +1,6 @@
 <?php
+// user/dashboard.php
+
 require_once '../settings/core.php';
 
 // Ensure user is logged in

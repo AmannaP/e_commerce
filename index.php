@@ -1,4 +1,6 @@
 <?php
+// index.php
+
 // require_once 'settings/core.php';
 ?>
 <!DOCTYPE html>
@@ -122,7 +124,8 @@
         <div class="row g-4">
             <div class="col-md-4">
                 <div class="card feature-card p-4 shadow-sm">
-                    <h4 style="color:#b77a7a;">🩺 Access to Services</h4>
+                   <!-- increase the font size of the icon and remove the margin-bottom -->
+                    <a href="./user/product_page.php" class="fw-bold" style="color:#b77a7a; font-size: 1.5rem;">🩺 Access to Services</a>
                     <p>Find verified healthcare, legal, and counseling support near you. We ensure confidentiality and compassion at every step.</p>
                 </div>
             </div>

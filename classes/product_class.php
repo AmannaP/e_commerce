@@ -1,4 +1,5 @@
 <?php
+
 // classes/product_class.php
 require_once '../settings/db_class.php';
 
@@ -133,7 +134,77 @@ class Product extends db_conn {
         $stmt->execute([$brand_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    // Fetch products with filters and pagination
+    public function getFilteredProducts($search = '', $cat_id = 0, $brand_id = 0, $limit = 9, $offset = 0) {
+    $sql = "SELECT p.*, c.cat_name, b.brand_name 
+            FROM products p
+            LEFT JOIN categories c ON p.product_cat = c.cat_id
+            LEFT JOIN brands b ON p.product_brand = b.brand_id
+            WHERE 1=1";
+    $params = [];
 
+    if (!empty($search)) {
+        $sql .= " AND (p.product_title LIKE :search OR p.product_keywords LIKE :search2)";
+        $params[':search'] = "%$search%";
+        $params[':search2'] = "%$search%";
+    }
 
+    if ($cat_id > 0) {
+        $sql .= " AND p.product_cat = :cat_id";
+        $params[':cat_id'] = $cat_id;
+    }
+
+    if ($brand_id > 0) {
+        $sql .= " AND p.product_brand = :brand_id";
+        $params[':brand_id'] = $brand_id;
+    }
+
+    $sql .= " ORDER BY p.product_id DESC LIMIT :limit OFFSET :offset";
+
+    $stmt = $this->db->prepare($sql);
+    // Bind values safely
+    foreach ($params as $key => $val) {
+        $stmt->bindValue($key, $val);
+    }
+    $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Count total products for pagination
+    public function countFilteredProducts($search = '', $cat_id = 0, $brand_id = 0) {
+        $sql = "SELECT COUNT(*) AS total 
+                FROM products p
+                WHERE 1=1";
+        $params = [];
+
+        if (!empty($search)) {
+            $sql .= " AND (p.product_title LIKE :search OR p.product_keywords LIKE :search2)";
+            $params[':search'] = "%$search%";
+            $params[':search2'] = "%$search%";
+        }
+
+        if ($cat_id > 0) {
+            $sql .= " AND p.product_cat = :cat_id";
+            $params[':cat_id'] = $cat_id;
+        }
+
+        if ($brand_id > 0) {
+            $sql .= " AND p.product_brand = :brand_id";
+            $params[':brand_id'] = $brand_id;
+        }
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val);
+        }
+
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? (int)$row['total'] : 0;
+    }
 }
+
 ?>

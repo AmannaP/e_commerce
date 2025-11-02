@@ -1,9 +1,5 @@
 <?php
 // actions/add_brand_action.php
-file_put_contents('debug_log.txt', print_r($_POST, true) . "\n", FILE_APPEND);
-
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
 require_once '../settings/core.php';
 require_once '../controllers/brand_controller.php';

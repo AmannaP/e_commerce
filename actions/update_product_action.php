@@ -19,7 +19,7 @@ $title = isset($_POST['product_title']) ? trim($_POST['product_title']) : '';
 $price = isset($_POST['product_price']) ? trim($_POST['product_price']) : '';
 $description = isset($_POST['product_description']) ? trim($_POST['product_description']) : '';
 $keywords = isset($_POST['product_keywords']) ? trim($_POST['product_keywords']) : '';
-$upload_dir = "../images/products/";
+$upload_dir = "../uploads/products/";
 $default_image = "default.png";  
 
 if ($product_id <= 0 || $cat_id <= 0 || $brand_id <= 0 || empty($title) || $price === '') {

@@ -1,3 +1,5 @@
+// js/category.js
+
 $(document).ready(function () {
     // Validate category name
     function validateCategoryName(name) {

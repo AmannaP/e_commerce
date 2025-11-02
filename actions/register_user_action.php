@@ -1,6 +1,5 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// actions/register_user_action.php
 
 require_once '../controllers/user_controller.php';
 

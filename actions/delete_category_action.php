@@ -1,4 +1,6 @@
 <?php
+// actions/delete_category_action.php
+
 require_once '../settings/core.php';
 require_once '../controllers/category_controller.php';
 

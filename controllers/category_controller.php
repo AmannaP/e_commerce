@@ -1,4 +1,5 @@
 <?php
+// controllers/category_controller.php
 require_once '../classes/category_class.php';
 
 // Fetch all categories

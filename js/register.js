@@ -1,3 +1,5 @@
+// js/register.js
+
 $(document).ready(function() {
     $('#register-form').submit(function(e) {
         e.preventDefault();

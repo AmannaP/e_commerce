@@ -1,4 +1,5 @@
 <?php
+// controllers/user_controller.php
 
 require_once '../classes/user_class.php';
 

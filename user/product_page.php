@@ -1,20 +1,11 @@
 <?php
+// user/product_page.php
+
 require_once '../settings/core.php';
 require_once '../controllers/product_controller.php';
 require_once '../controllers/category_controller.php';
 require_once '../controllers/brand_controller.php';
 
-// Optional: Protect this page for logged-in users only
-if (!checkLogin()) {
-    header("Location: ../login/login.php");
-    exit();
-}
-
-// Redirect admins if needed
-if (isAdmin()) {
-    header("Location: ../admin/dashboard.php");
-    exit();
-}
 
 // Fetch filters
 $categories = fetch_categories_ctr();
@@ -75,7 +66,13 @@ $brands = fetch_brands_ctr();
     <a class="navbar-brand fw-bold" href="#">GBVAid</a>
     <div class="d-flex">
         <span class="navbar-text text-white me-3">
-            Welcome, <?= htmlspecialchars($_SESSION['name']); ?> 💜
+            <?php if(isset($_SESSION['name'])): ?>
+                Welcome, <?= htmlspecialchars($_SESSION['name']); ?> 💜
+                <a href="../user/dashboard.php" class="btn btn-secondary mb-4">&larr; Back</a>
+            <?php else: ?>
+                Welcome, Guest 💜
+                <a href="../index.php" class="btn btn-secondary mb-4">&larr; Back</a>
+            <?php endif; ?>
         </span>
         <a href="../login/logout.php" class="btn btn-outline-light btn-sm">Logout</a>
     </div>

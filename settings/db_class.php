@@ -1,4 +1,6 @@
 <?php
+// settings/db_class.php
+
 require_once 'db_cred.php';
 
 /**

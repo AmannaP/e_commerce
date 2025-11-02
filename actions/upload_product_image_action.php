@@ -24,11 +24,11 @@ if (!isset($_FILES['product_image']) || $_FILES['product_image']['error'] !== UP
     exit;
 }
 
-// Validate product ID (optional if you're uploading per product)
+// Validate product ID uploading per product
 $product_id = isset($_POST['product_id']) ? intval($_POST['product_id']) : 0;
 
-// Define upload directory (must exist on the server)
-$upload_dir = realpath(__DIR__ . '/../uploads'); // absolute path
+// Define upload directory
+$upload_dir = realpath(__DIR__ . '/../uploads');
 if ($upload_dir === false) {
     echo json_encode(['status' => 'error', 'message' => 'Upload directory not found.']);
     exit;

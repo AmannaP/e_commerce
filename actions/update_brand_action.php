@@ -1,7 +1,5 @@
 <?php
 // actions/update_brand_action.php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
 require_once '../settings/core.php';
 require_once '../controllers/brand_controller.php';

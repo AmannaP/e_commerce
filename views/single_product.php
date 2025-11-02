@@ -1,4 +1,6 @@
 <?php
+// views/single_product.php
+require_once '../settings/core.php';
 require_once '../controllers/product_controller.php';
 
 // Get product ID from URL
@@ -54,7 +56,7 @@ if (!$product) {
 <body>
 
 <div class="container mt-5 mb-5">
-    <a href="../user/product_page.php" class="btn btn-secondary mb-4">&larr; Back to All Products</a>
+    <a href="../user/product_page.php" class="btn btn-secondary mb-4">&larr; Back</a>
 
     <div class="card shadow p-4 align-items-center">
         <div class="row">
