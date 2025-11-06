@@ -158,8 +158,8 @@ if ($("#product-list").length > 0) {
                         // RENDER PRODUCTS
                         res.products.forEach((p) => {
                             const imgUrl = p.product_image
-                                ? `../images/products/${p.product_image}`
-                                : `../images/products/default.png`;
+                                ? `../uploads/products/${p.product_image}`
+                                : `../uploads/products/default.png`;
 
                             container.append(`
                                 <div class="col-md-4">
