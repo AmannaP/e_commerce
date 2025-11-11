@@ -62,4 +62,9 @@ function update_product_image_ctr($product_id, $image_path) {
     return update_product_image_cls($product_id, $image_path);
 }
 
+function delete_product_ctr($product_id) {
+    $p = new Product();
+    return $p->deleteProduct($product_id);
+}
+
 ?>

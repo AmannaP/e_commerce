@@ -24,6 +24,7 @@ if (!$product) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
+    
         body {
             background-color: #f8f9fa;
             font-family: 'Segoe UI', sans-serif;
@@ -39,12 +40,12 @@ if (!$product) {
             border-radius: 10px;
         }
         .btn-primary {
-            background-color: #b77a7a;
-            border-color: #b77a7a;
+            background-color: #c453eaff;
+            border-color: #c453eaff;
         }
         .btn-primary:hover {
-            background-color: #a36b6b;
-            border-color: #a36b6b;
+            background-color: #e598ffff;
+            border-color: #e598ffff;
         }
         .product-label {
             font-weight: bold;
@@ -62,7 +63,7 @@ if (!$product) {
         <div class="row">
             <!-- Product Image -->
             <div class="col-md-6">
-                <img src="../images/products/<?= htmlspecialchars($product['product_image'] ?: '../images/products/default.png') ?>" 
+                <img src="../uploads/products/<?= htmlspecialchars($product['product_image'] ?: '../uploads/products/default.jpg') ?>" 
                      alt="<?= htmlspecialchars($product['product_title']) ?>" 
                      class="product-img shadow-sm">
             </div>

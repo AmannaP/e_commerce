@@ -13,30 +13,16 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #fffaf9;
+            background-color: #e598ffff;
             color: #333;
-        }
-
-        .menu-tray {
-            position: fixed;
-            top: 16px;
-            right: 16px;
-            background: rgba(255, 255, 255, 0.97);
-            border: 1px solid #e6e6e6;
-            border-radius: 8px;
-            padding: 8px 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            z-index: 1000;
-        }
-
-        .menu-tray a {
-            margin-left: 8px;
         }
 
         .hero {
             height: 90vh;
-            background: linear-gradient(to right, #b77a7a, #d59a9a);
+            background: linear-gradient(to right, #c453eaff, #b796c2ff, #c453eaff, #c190cfff);
             color: white;
+            border-radius: 12px;
+            padding: 2rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -59,14 +45,14 @@
 
         .btn-custom {
             background-color: #fff;
-            color: #b77a7a;
+            color: #c453eaff;
             border: 2px solid white;
             font-weight: 600;
         }
 
         .btn-custom:hover {
             background-color: #f6f0f0;
-            color: #a85c5c;
+            color: #c453eaff;
         }
 
         .features {
@@ -86,22 +72,35 @@
         }
 
         footer {
-            background-color: #b77a7a;
+            background-color: #c453eaff;
             color: #fff;
             padding: 2.5rem 0;
             text-align: center;
         }
     </style>
 </head>
+<!--  header -->
+  <header>
+      <nav class="navbar navbar-expand-lg navbar-light">
+          <div class="container">
+              <a class="navbar-brand" href="#">GBVAid: Your Digital Ally Against Gender-Based Violence</a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarNav">
+                  <ul class="navbar-nav ms-auto">
+                      <li class="nav-item">
+                          <a class="nav-link" href="login/register.php">Register</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link" href="login/login.php">Login</a>
+                      </li>
+                  </ul>
+              </div>
+          </div>
+      </nav>
+  </header>
 <body>
-
-    <!-- Menu -->
-    <div class="menu-tray">
-		<a href="login/register.php" class="btn btn-sm btn-outline-light" style="background-color: #b77a7a; color: white;">Register</a>
-		<a href="login/login.php" class="btn btn-sm btn-outline-light" style="background-color: #b77a7a; color: white;">Login</a>
-		<!-- <a href="#about" class="btn btn-sm btn-outline-light" style="background-color: #b77a7a; color: white;">About</a>
-		<a href="#contact" class="btn btn-sm btn-outline-light" style="background-color: #b77a7a; color: white;">Contact</a> -->
-	</div>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -119,27 +118,27 @@
 
     <!-- Platform Summary -->
     <section class="features container text-center">
-        <h2 class="fw-bold mb-5" style="color:#b77a7a;">What We Offer</h2>
+        <h2 class="fw-bold mb-5" style="color:#fff;">What We Offer</h2>
 
         <div class="row g-4">
             <div class="col-md-4">
                 <div class="card feature-card p-4 shadow-sm">
                    <!-- increase the font size of the icon and remove the margin-bottom -->
-                    <a href="./user/product_page.php" class="fw-bold" style="color:#b77a7a; font-size: 1.5rem;">🩺 Access to Services</a>
+                    <a href="./user/product_page.php" class="fw-bold" style="color:#c453eaff; font-size: 1.5rem;">🩺 Access to Services</a>
                     <p>Find verified healthcare, legal, and counseling support near you. We ensure confidentiality and compassion at every step.</p>
                 </div>
             </div>
 
             <div class="col-md-4">
                 <div class="card feature-card p-4 shadow-sm">
-                    <h4 style="color:#b77a7a;">🕊 Safe Reporting</h4>
+                    <h4 style="color:#c453eaff;">🕊 Safe Reporting</h4>
                     <p>Report GBV incidents securely and anonymously. Our trusted partners respond promptly with the help you need.</p>
                 </div>
             </div>
 
             <div class="col-md-4">
                 <div class="card feature-card p-4 shadow-sm">
-                    <h4 style="color:#b77a7a;">🤝 Community Empowerment</h4>
+                    <h4 style="color:#c453eaff;">🤝 Community Empowerment</h4>
                     <p>Join awareness programs, advocacy campaigns, and survivor-led initiatives for lasting social change.</p>
                 </div>
             </div>
@@ -148,21 +147,21 @@
         <div class="row g-4 mt-4">
             <div class="col-md-4">
                 <div class="card feature-card p-4 shadow-sm">
-                    <h4 style="color:#b77a7a;">📞 24/7 Support Lines</h4>
+                    <h4 style="color:#c453eaff;">📞 24/7 Support Lines</h4>
                     <p>Connect instantly with trained responders who provide real-time guidance and care, any time you need it.</p>
                 </div>
             </div>
 
             <div class="col-md-4">
                 <div class="card feature-card p-4 shadow-sm">
-                    <h4 style="color:#b77a7a;">💡 Education & Resources</h4>
+                    <h4 style="color:#c453eaff;">💡 Education & Resources</h4>
                     <p>Access articles, guides, and training materials to understand, prevent, and respond to GBV effectively.</p>
                 </div>
             </div>
 
             <div class="col-md-4">
                 <div class="card feature-card p-4 shadow-sm">
-                    <h4 style="color:#b77a7a;">🔐 Data Privacy</h4>
+                    <h4 style="color:#c453eaff;">🔐 Data Privacy</h4>
                     <p>Your safety matters. All interactions and reports are encrypted and stored securely to protect your identity.</p>
                 </div>
             </div>

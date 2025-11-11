@@ -28,7 +28,7 @@ if (isAdmin()) {
             font-family: 'Segoe UI', sans-serif;
         }
         .navbar {
-            background-color: #b77a7a;
+            background-color: #c453eaff;
         }
         .dashboard-card {
             border: none;
@@ -42,15 +42,15 @@ if (isAdmin()) {
             box-shadow: 0 6px 14px rgba(0,0,0,0.12);
         }
         .btn-custom {
-            background-color: #b77a7a;
+            background-color: #c453eaff;
             color: white;
         }
         .btn-custom:hover {
-            background-color: #a46868;
+            background-color: #e598ffff;
             color: white;
         }
         h2 {
-            color: #b77a7a;
+            color: #c453eaff;
         }
     </style>
 </head>

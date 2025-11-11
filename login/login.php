@@ -11,45 +11,29 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
         .btn-custom {
-            background-color: #D19C97;
-            border-color: #D19C97;
+            background-color: #c453eaff;
+            border-color: #c453eaff;
             color: #fff;
             transition: background-color 0.3s, border-color 0.3s;
         }
 
         .btn-custom:hover {
-            background-color: #b77a7a;
-            border-color: #b77a7a;
+            background-color: #e598ffff;
+            border-color: #c453eaff;
         }
 
         .highlight {
-            color: #D19C97;
+            color: #c453eaff;
             transition: color 0.3s;
         }
 
         .highlight:hover {
-            color: #b77a7a;
+            color: #c453eaff;
         }
 
         body {
             /* Base background color */
-            background-color: #f8f9fa;
-
-            /* Gradient-like grid using repeating-linear-gradients */
-            background-image:
-                repeating-linear-gradient(0deg,
-                    #b77a7a,
-                    #b77a7a 1px,
-                    transparent 1px,
-                    transparent 20px),
-                repeating-linear-gradient(90deg,
-                    #b77a7a,
-                    #b77a7a 1px,
-                    transparent 1px,
-                    transparent 20px),
-                linear-gradient(rgba(183, 122, 122, 0.1),
-                    rgba(183, 122, 122, 0.1));
-
+            background-color: #e598ffff;
             /* Blend the gradients for a subtle overlay effect */
             background-blend-mode: overlay;
 
@@ -68,15 +52,18 @@
         }
 
         .card {
-            border: none;
+            border: 1px solid #fff;
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .card-header {
-            background-color: #D19C97;
+            background-color: #c453eaff;
             color: #fff;
+            font-weight: bold;
+            border-bottom: 2px solid #fff;
+            border-radius: 15px 15px 0 0;
         }
 
         .animate-pulse-custom {
@@ -100,7 +87,7 @@
         /* Additional Styling for Enhanced Appearance */
         .form-label i {
             margin-left: 5px;
-            color: #b77a7a;
+            color: #c453eaff;
         }
 
         .alert-info {

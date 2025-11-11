@@ -21,15 +21,14 @@ $brands = fetch_brands_ctr();
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
       body {
           background-color: #f8f9fa;
           font-family: 'Segoe UI', sans-serif;
       }
       .navbar {
-          background-color: #b77a7a;
+          background-color: #c453eaff;
       }
       .product-card {
           border: none;
@@ -43,15 +42,19 @@ $brands = fetch_brands_ctr();
           box-shadow: 0 6px 14px rgba(0,0,0,0.12);
       }
       .btn-custom {
-          background-color: #b77a7a;
+          background-color: #c453eaff;
           color: white;
       }
       .btn-custom:hover {
-          background-color: #a46868;
+          background-color: #e598ffff;
           color: white;
       }
       h2, h4 {
-          color: #b77a7a;
+          color: #c453eaff;
+      }
+      .btn-custom {
+          background-color: #c453eaff;
+          color: white;
       }
       footer {
           margin-top: 40px;
@@ -68,13 +71,13 @@ $brands = fetch_brands_ctr();
         <span class="navbar-text text-white me-3">
             <?php if(isset($_SESSION['name'])): ?>
                 Welcome, <?= htmlspecialchars($_SESSION['name']); ?> 💜
-                <a href="../user/dashboard.php" class="btn btn-secondary mb-4">&larr; Back</a>
+                <a href="../user/dashboard.php" class="btn btn-outline-light btn-sm">&larr; Back</a>
             <?php else: ?>
                 Welcome, Guest 💜
-                <a href="../index.php" class="btn btn-secondary mb-4">&larr; Back</a>
+                <a href="../index.php" class="btn btn-outline-light btn-sm">&larr; Back</a>
             <?php endif; ?>
-        </span>
         <a href="../login/logout.php" class="btn btn-outline-light btn-sm">Logout</a>
+        </span>
     </div>
   </div>
 </nav>
@@ -122,6 +125,10 @@ $brands = fetch_brands_ctr();
 <div class="row g-4" id="product-list">
       <!-- Products will load dynamically via product.js -->
   </div>
+    <!-- ================== Pagination ================== -->
+    <div class="pagination-container text-center mt-4">
+    <div id="pagination" class="pagination-buttons"></div>
+</div>
 </div>
 
 <footer class="text-center text-muted mt-5 mb-3">

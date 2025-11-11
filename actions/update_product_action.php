@@ -17,10 +17,10 @@ $cat_id = isset($_POST['cat_id']) ? intval($_POST['cat_id']) : 0;
 $brand_id = isset($_POST['brand_id']) ? intval($_POST['brand_id']) : 0;
 $title = isset($_POST['product_title']) ? trim($_POST['product_title']) : '';
 $price = isset($_POST['product_price']) ? trim($_POST['product_price']) : '';
-$description = isset($_POST['product_description']) ? trim($_POST['product_description']) : '';
+$description = isset($_POST['product_desc']) ? trim($_POST['product_desc']) : '';
 $keywords = isset($_POST['product_keywords']) ? trim($_POST['product_keywords']) : '';
 $upload_dir = "../uploads/products/";
-$default_image = "default.png";  
+$default_image = "default.jpg";
 
 if ($product_id <= 0 || $cat_id <= 0 || $brand_id <= 0 || empty($title) || $price === '') {
     echo json_encode(["status" => "error", "message" => "Please provide valid product details."]);
@@ -53,13 +53,13 @@ if (isset($_FILES['product_image']) && $_FILES['product_image']['error'] === UPL
 // Update the product
 $result = update_product_ctr(
     $product_id,
-    $product_cat,
-    $product_brand,
-    $product_title,
-    $product_price,
-    $product_desc,
+    $cat_id,
+    $brand_id,
+    $title,
+    $price,
+    $description,
     $product_image,
-    $product_keywords,
+    $keywords,
     $user_id
 );
 

@@ -5,6 +5,26 @@ require_once '../controllers/product_controller.php';
 
 header('Content-Type: application/json');
 
+// Check if a single product ID is requested
+if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+    $id = intval($_GET['id']);
+    $product = view_single_product_ctr($id);
+
+    if ($product) {
+        $product['product_desc'] = html_entity_decode(stripslashes($product['product_desc'] ?? ''));
+        echo json_encode([
+            "status" => "success",
+            "product" => $product
+        ]);
+    } else {
+        echo json_encode([
+            "status" => "error",
+            "message" => "Product not found."
+        ]);
+    }
+    exit;
+}
+
 // Pagination
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 $limit = 9;
@@ -27,7 +47,7 @@ try {
     // Assign default image where missing
     foreach ($products as &$p) {
         if (empty($p['product_image'])) {
-            $p['product_image'] = 'default.png';
+            $p['product_image'] = 'default.jpg';
         }
     }
 

@@ -18,7 +18,7 @@ requireAdmin();
         }
 
         .navbar {
-            background-color: #b77a7a;
+            background-color: #c453eaff;
         }
 
         .navbar-brand {
@@ -43,17 +43,17 @@ requireAdmin();
         }
 
         .dashboard-card h5 {
-            color: #b77a7a;
+            color: #c453eaff;
             font-weight: 600;
         }
 
         .btn-primary {
-            background-color: #b77a7a;
+            background-color: #c453eaff;
             border: none;
         }
 
         .btn-primary:hover {
-            background-color: #9f6666;
+            background-color: #c17eeeff;
         }
     </style>
 </head>
@@ -78,7 +78,7 @@ requireAdmin();
     <!-- Main Section -->
     <div class="container dashboard-header">
         <div class="text-center mb-5">
-            <h2 class="fw-bold" style="color:#b77a7a;">Welcome to the Admin Control Center</h2>
+            <h2 class="fw-bold" style="color:#c453eaff;">Welcome to the Admin Control Center</h2>
             <p class="text-muted">
                 Manage GBV-related resources, service categories, and support data to ensure victims and survivors receive timely help.
             </p>

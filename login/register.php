@@ -10,44 +10,29 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
         .btn-custom {
-            background-color: #D19C97;
-            border-color: #D19C97;
+            background-color: #c453eaff;
+            border-color: #c453eaff;
             color: #fff;
             transition: background-color 0.3s, border-color 0.3s;
         }
 
         .btn-custom:hover {
-            background-color: #b77a7a;
-            border-color: #b77a7a;
+            background-color: #e598ffff;
+            border-color: #e598ffff;
         }
 
         .highlight {
-            color: #D19C97;
+            color: #c453eaff;
             transition: color 0.3s;
         }
 
         .highlight:hover {
-            color: #b77a7a;
+            color: #e598ffff;
         }
 
         body {
             /* Base background color */
-            background-color: #f8f9fa;
-
-            /* Gradient-like grid using repeating-linear-gradients */
-            background-image:
-                repeating-linear-gradient(0deg,
-                    #b77a7a,
-                    #b77a7a 1px,
-                    transparent 1px,
-                    transparent 20px),
-                repeating-linear-gradient(90deg,
-                    #b77a7a,
-                    #b77a7a 1px,
-                    transparent 1px,
-                    transparent 20px),
-                linear-gradient(rgba(183, 122, 122, 0.1),
-                    rgba(183, 122, 122, 0.1));
+            background-color: #e598ffff;
 
             /* Blend the gradients for a subtle overlay effect */
             background-blend-mode: overlay;
@@ -74,13 +59,13 @@
         }
 
         .card-header {
-            background-color: #D19C97;
+            background-color: #c453eaff;
             color: #fff;
         }
 
         .custom-radio .form-check-input:checked+.form-check-label::before {
-            background-color: #D19C97;
-            border-color: #D19C97;
+            background-color: #c453eaff;
+            border-color: #c453eaff;
         } 
 
         .form-check-label {
@@ -97,14 +82,14 @@
             transform: translateY(-50%);
             width: 1rem;
             height: 1rem;
-            border: 2px solid #D19C97;
+            border: 2px solid #c453eaff;
             border-radius: 50%;
             background-color: #fff;
             transition: background-color 0.3s, border-color 0.3s;
         }
 
         .form-check-input:focus+.form-check-label::before {
-            box-shadow: 0 0 0 0.2rem rgba(209, 156, 151, 0.5);
+            box-shadow: 0 0 0 0.2rem #c453eaff;
         }
         .form-check-input {
             position: absolute;
@@ -112,8 +97,8 @@
         }
 
         .form-check-input:checked+.form-check-label::before {
-            background-color: #D19C97;
-            border-color: #D19C97;
+            background-color: #c453eaff;
+            border-color: #c453eaff;
         }
 
         .animate-pulse-custom {

@@ -4,11 +4,11 @@ require_once '../controllers/category_controller.php';
 
 // Restrict access to admins only
 if (!checkLogin()) {
-    header("Location: /register_sample/login/login.php");
+    header("Location: /e_commerce-1/login/login.php");
     exit();
 }
 if (!isAdmin()) {
-    header("Location: /register_sample/login/login.php");
+    header("Location: /e_commerce-1/login/login.php");
     exit();
 }
 ?>
@@ -24,9 +24,28 @@ if (!isAdmin()) {
             color: #333;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
+        /* delete button */
+        .btn-danger {
+            background-color: #c453eaff;
+            border-color: #c453eaff;
+        }
+        .btn-danger:hover {
+            background-color: #d42704ff;
+            border-color: #c453eaff;
+        }
+        /* update button */
+        .btn-warning {
+            background-color: #c453eaff;
+            border-color: #c453eaff;
+            color: #fff;
+        }
+        .btn-warning:hover {
+            background-color: #e598ffff;
+            border-color: #c453eaff;
+            color: #fff;
+        }
         .navbar {
-            background-color: #b77a7a;
+            background-color: #c453eaff;
         }
 
         .navbar-brand {
@@ -34,7 +53,7 @@ if (!isAdmin()) {
         }
 
         h2 {
-            color: #b77a7a;
+            color: #c453eaff;
             font-weight: 700;
         }
 
@@ -45,17 +64,17 @@ if (!isAdmin()) {
         }
 
         .btn-primary {
-            background-color: #b77a7a;
-            border-color: #b77a7a;
+            background-color: #c453eaff;
+            border-color: #c453eaff;
         }
 
         .btn-primary:hover {
-            background-color: #a36969;
-            border-color: #a36969;
+            background-color: #e598ffff;
+            border-color: #e598ffff;
         }
 
         .table th {
-            background-color: #b77a7a;
+            background-color: #c453eaff;
             color: white;
         }
 
@@ -76,9 +95,9 @@ if (!isAdmin()) {
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/register_sample/admin/dashboard.php">GBVAid Admin Panel</a>
+        <a class="navbar-brand" href="/e_commerce-1/admin/dashboard.php">GBVAid Admin Panel</a>
         <div class="d-flex">
-            <a href="/register_sample/login/logout.php" class="btn btn-outline-light btn-sm">Logout</a>
+            <a href="/e_commerce-1/login/logout.php" class="btn btn-outline-light btn-sm">Logout</a>
         </div>
     </div>
 </nav>

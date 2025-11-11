@@ -26,22 +26,49 @@ $categories = fetch_categories_ctr();
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
+        /* change on the color of the color of the delete and update buttons */
+        .btn-danger {
+            background-color: #c453eaff;
+            border-color: #c453eaff;
+        }
+        .btn-danger:hover {
+            background-color: #d42704ff;
+            border-color: #c453eaff;
+        }
+        /* Change on the color of the color of the update buttons */
+        .btn-warning {
+            background-color: #c453eaff;
+            border-color: #c453eaff;
+            color: #fff;
+        }
+        .btn-warning:hover {
+            background-color: #e598ffff;
+            border-color: #c453eaff;
+            color: #fff;
+        }
         body {
-            background-color: #f8f9fa;
+            background-color: #c453eaff;
         }
         .navbar {
-            background-color: #b77a7a !important;
+            background-color: #c453eaff !important;
         }
         .btn-primary {
-            background-color: #b77a7a;
-            border-color: #b77a7a;
+            background-color: #c453eaff;
+            border-color: #c453eaff;
         }
         .btn-primary:hover {
-            background-color: #a66b6b;
-            border-color: #a66b6b;
+            background-color: #c453eaff;
+            border-color: #fff;
         }
         .card {
             border-radius: 10px;
+        }
+        .table th {
+            background-color: #c453eaff;
+            color: #fff;
+        }
+        .table td, .table th {
+            vertical-align: middle;
         }
     </style>
 </head>
@@ -59,8 +86,8 @@ $categories = fetch_categories_ctr();
 
 <!-- Main Content -->
 <div class="container mt-5">
-    <h2 class="fw-bold text-center mb-4">Brand Management</h2>
-    <p class="text-center text-muted">As an admin, you can create, update, and delete brands (sub-services) under GBV categories like Counseling, Legal Aid, Medical Support, etc.</p>
+    <h2 class="fw-bold text-center mb-4" style="color:#fff;">Brand Management</h2>
+    <p class="text-center text-muted" style="color:#fff;">As an admin, you can create, update, and delete brands (sub-services) under GBV categories like Counseling, Legal Aid, Medical Support, etc.</p>
 
     <div class="card p-4 mb-4 shadow-sm">
         <!-- CREATE -->

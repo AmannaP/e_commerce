@@ -205,6 +205,17 @@ class Product extends db_conn {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ? (int)$row['total'] : 0;
     }
+
+    // Delete product
+    public function deleteProduct($product_id) {
+        try {
+            $sql = "DELETE FROM products WHERE product_id = ?";
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute([$product_id]);
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
 }
 
 ?>

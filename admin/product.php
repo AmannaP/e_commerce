@@ -2,6 +2,7 @@
 require_once '../settings/core.php';
 require_once '../controllers/category_controller.php';
 require_once '../controllers/brand_controller.php';
+require_once '../controllers/product_controller.php';
 
 // only admin
 if (!checkLogin() || !isAdmin()) {
@@ -18,9 +19,22 @@ $brands = fetch_brands_ctr(); // returns array of brands
 <meta charset="utf-8">
 <title>Manage Products | GBVAid Admin</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
 <style>
-.card { border-radius: 10px; }
-.btn-primary { background:#b77a7a; border-color:#b77a7a; }
+    body { font-family: 'Poppins', sans-serif; background-color: #c453eaff; }
+    .edit-btn { background-color: #c453eaff; border-color:#c453eaff; }
+    .edit-btn:hover { background-color: #af5da4ff; border-color:#c453eaff; }
+    .table th {background-color: #c453eaff;}
+    .table body { background-color: #c453eaff; font-family: 'Poppins', sans-serif; }
+    .body {background-color: #f9f6f6;font-family: 'Poppins', sans-serif;}
+    .edit-btn, .delete-btn {display: inline-block !important; visibility: visible !important; opacity: 1 !important; color: #fff !important; }
+    .card { border-radius: 10px; }
+    .btn-primary { background: 0; border-color:#c453eaff; }
+    .btn-primary { background:#c453eaff; border-color:#c453eaff; }
+    .btn-secondary { background:#c453eaff; border-color:#c453eaff; }           
+    .btn-primary:hover { background-color: #c17eeeff; border-color:#a236e6; }
+    .btn-secondary:hover { background-color: #c17eeeff; border-color:#a236e6; }
 </style>
 </head>
 <body class="p-4">
@@ -64,14 +78,13 @@ $brands = fetch_brands_ctr(); // returns array of brands
                 </div>
                 <div class="col-md-12">
                     <label>Description</label>
-                    <textarea id="product_description" name="product_description" class="form-control" rows="4"></textarea>
+                    <textarea id="product_desc" name="product_desc" class="form-control" rows="4"></textarea>
                 </div>
                 <div class="col-md-6">
                     <label>Image (jpg/png/webp/gif/jpeg)</label>
                     <input type="file" id="product_image" name="product_image" class="form-control">
                 </div>
-            </div>
-
+            </div>        
             <div class="mt-3">
                 <button type="submit" id="save-product" class="btn btn-primary">Save Product</button>
                 <button type="button" id="reset-form" class="btn btn-secondary">Reset</button>
@@ -81,19 +94,26 @@ $brands = fetch_brands_ctr(); // returns array of brands
 
     <div class="card p-3">
         <h5>Existing Products</h5>
+        </style>
+        <div class="table-responsive">
         <table class="table table-bordered" id="product-table">
             <thead class="table-light">
                 <tr>
                     <th>ID</th><th>Image</th><th>Title</th><th>Category</th><th>Brand</th><th>Price</th><th>Actions</th>
                 </tr>
             </thead>
-            <tbody></tbody>
+            <tbody>
+                <!-- Products will be populated here via JS -->
+            </tbody>
         </table>
     </div>
 </div>
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script src="../js/product.js"></script>
 </body>
+<footer class="text-center text-muted mt-5 mb-3">
+  <small>© <?= date('Y'); ?> GBVAid — Empowering safety and support for all.</small>
+</footer>
 </html>

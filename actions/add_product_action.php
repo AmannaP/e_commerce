@@ -30,7 +30,7 @@ if ($cat_id <= 0 || $brand_id <= 0 || empty($title) || $price === '') {
 
 // Handle product image
 $upload_dir = "../uploads/products/";
-$default_image = "default.png"; 
+$default_image = "default.jpg"; 
 
 // Check if user uploaded a file
 if (isset($_FILES['product_image']) && $_FILES['product_image']['error'] === UPLOAD_ERR_OK) {
