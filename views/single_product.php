@@ -89,10 +89,13 @@ if (!$product) {
                 <?php endif; ?>
 
                 <!-- Make the add to cart button to be functional. -->
-                <button class="btn btn-primary btn-lg mt-3">
-                    <i class="bi bi-cart-plus"></i> Add to Cart
-                    <a href="../actions/add_to_cart_action.php?product_id=<?= htmlspecialchars($product['product_id']) ?>" class="stretched-link"></a>
+                <button 
+                    class="btn btn-lg btn-success addToCartBtn"
+                    data-product-id="<?= $product['product_id'] ?>"
+                >
+                    Add to Cart
                 </button>
+
             </div>
         </div>
     </div>
