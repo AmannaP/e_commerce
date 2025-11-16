@@ -89,13 +89,13 @@ if (!$product) {
                 <?php endif; ?>
 
                 <!-- Make the add to cart button to be functional. -->
-                <button 
-                    class="btn btn-lg btn-success addToCartBtn"
-                    data-product-id="<?= $product['product_id'] ?>"
-                >
-                    Add to Cart
+                <button class="btn btn-primary add-to-cart-btn"
+                    data-id="<?php echo $product['product_id']; ?>"
+                    data-title="<?php echo htmlspecialchars($product['product_title']); ?>"
+                    data-price="<?php echo $product['product_price']; ?>"
+                    data-image="<?php echo htmlspecialchars($product['product_image']); ?>"
+                    >Add to Cart
                 </button>
-
             </div>
         </div>
     </div>
@@ -103,5 +103,6 @@ if (!$product) {
 <footer class="text-center text-muted mt-4 mb-3">
     <small>© <?= date('Y'); ?> GBVAid — Empowering safety and access.</small>
 </footer>
+    <script src="../js/cart.js"></script>
 </body>
 </html>

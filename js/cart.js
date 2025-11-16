@@ -1,189 +1,154 @@
-// cart.js (Updated and Safe for All Pages)
+//cart.js
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("Cart.js loaded");
 
-// -------------------------------
-// Utility: Show feedback messages
-// -------------------------------
-function showMessage(type, message) {
-    const box = document.createElement("div");
-    box.className = `alert alert-${type}`; // success, danger, warning
-    box.textContent = message;
+    // ADD TO CART BUTTON HANDLER
+    document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
+        btn.addEventListener("click", function () {
 
-    box.style.position = "fixed";
-    box.style.top = "20px";
-    box.style.right = "20px";
-    box.style.zIndex = "9999";
-    box.style.padding = "10px 20px";
+            const productId = this.dataset.id;
+            const title = this.dataset.title;
+            const price = this.dataset.price;
+            const image = this.dataset.image;
 
-    document.body.appendChild(box);
+            console.log("Adding product:", productId, title);
 
-    setTimeout(() => box.remove(), 3000);
-}
+            const formData = new FormData();
+            formData.append('product_id', productId);
+            formData.append('qty', 1);
 
-// -------------------------------
-// Add Item to Cart (works on ANY page)
-// -------------------------------
-async function addToCart(product_id, qty = 1) {
+            fetch("../actions/add_to_cart_action.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(res => res.text())  // Changed to .text() to see raw response
+            .then(text => {
+                console.log("Raw response:", text);  // Log the actual response
+                try {
+                    const data = JSON.parse(text);
+                    console.log("Parsed data:", data);
+
+                    if (data.status === "success") {
+                        alert("Item added to cart!");
+                    } else {
+                        alert("Failed to add to cart: " + (data.message || "Unknown error"));
+                    }
+                } catch (e) {
+                    console.error("JSON parse error:", e);
+                    console.error("Response was:", text);
+                    alert("Server returned an error. Check console for details.");
+                }
+            })
+            .catch(err => {
+                console.error("Fetch error:", err);
+                alert("An error occurred. Check console for details.");
+            });
+        });
+    });
+
+
+    // QUANTITY UPDATE HANDLER
+    document.querySelectorAll(".qty-input").forEach(input => {
+        input.addEventListener("change", function () {
+            const id = this.dataset.id;
+            const quantity = this.value;
+
+            const formData = new FormData();
+            formData.append('product_id', id);
+            formData.append('qty', quantity);
+
+            fetch("../actions/update_cart_action.php", {  // Updated path
+                method: "POST",
+                body: formData
+            })
+            .then(res => res.json())
+            .then(() => location.reload());
+        });
+    });
+
+    // REMOVE ITEM
+    document.querySelectorAll(".remove-item").forEach(btn => {
+        btn.addEventListener("click", function () {
+            const id = this.dataset.id;
+
+            const formData = new FormData();
+            formData.append('product_id', id);
+
+            fetch("../actions/remove_from_cart_action.php", {  // Updated path
+                method: "POST",
+                body: formData
+            })
+            .then(res => res.json())
+            .then(() => location.reload());
+        });
+    });
+});
+
+// STANDALONE FUNCTIONS FOR INLINE ONCLICK HANDLERS
+
+function updateCartQty(productId, quantity) {
     const formData = new FormData();
-    formData.append("product_id", product_id);
-    formData.append("qty", qty);
+    formData.append('product_id', productId);
+    formData.append('qty', quantity);
 
-    try {
-        const response = await fetch("actions/add_to_cart_action.php", {
-            method: "POST",
-            body: formData,
-        });
-
-        const result = await response.json();
-
-        if (result.status === "success") {
-            showMessage("success", "Item added to cart!");
-
-            // refresh cart UI only if available
-            if (document.getElementById("cart-items")) {
-                loadCartItems();
-            }
+    fetch("../actions/update_cart_action.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            location.reload(); // Refresh to show updated totals
         } else {
-            showMessage("danger", result.message);
+            alert("Failed to update quantity: " + (data.message || "Unknown error"));
         }
-    } catch (error) {
-        showMessage("danger", "Error adding item.");
-        console.error(error);
-    }
+    })
+    .catch(err => {
+        console.error("Error:", err);
+        alert("An error occurred while updating quantity.");
+    });
 }
 
-// -------------------------------
-// Update Item Quantity
-// -------------------------------
-async function updateCartItem(cart_id, qty) {
+function removeFromCart(productId) {
+    if (!confirm("Remove this item from cart?")) return;
+    
     const formData = new FormData();
-    formData.append("cart_id", cart_id);
-    formData.append("qty", qty);
+    formData.append('product_id', productId);
 
-    try {
-        const response = await fetch("actions/update_cart_item_action.php", {
-            method: "POST",
-            body: formData,
-        });
-
-        const result = await response.json();
-
-        if (result.status === "success") {
-            showMessage("success", "Cart updated!");
-            loadCartItems();
+    fetch("../actions/remove_from_cart_action.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            location.reload();
         } else {
-            showMessage("danger", result.message);
+            alert("Failed to remove item: " + (data.message || "Unknown error"));
         }
-    } catch (error) {
-        showMessage("danger", "Could not update cart.");
-        console.error(error);
-    }
+    })
+    .catch(err => {
+        console.error("Error:", err);
+        alert("An error occurred while removing item.");
+    });
 }
 
-// -------------------------------
-// Remove Cart Item
-// -------------------------------
-async function removeCartItem(cart_id) {
-    const formData = new FormData();
-    formData.append("cart_id", cart_id);
-
-    try {
-        const response = await fetch("actions/remove_from_cart_action.php", {
-            method: "POST",
-            body: formData,
-        });
-
-        const result = await response.json();
-
-        if (result.status === "success") {
-            showMessage("success", "Item removed!");
-            loadCartItems();
+function emptyCart() {
+    if (!confirm("Are you sure you want to empty your cart?")) return;
+    
+    fetch("../actions/empty_cart_action.php", {
+        method: "POST"
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            location.reload();
         } else {
-            showMessage("danger", result.message);
+            alert("Failed to empty cart: " + (data.message || "Unknown error"));
         }
-
-    } catch (error) {
-        showMessage("danger", "Could not remove item.");
-        console.error(error);
-    }
+    })
+    .catch(err => {
+        console.error("Error:", err);
+        alert("An error occurred while emptying cart.");
+    });
 }
-
-// -------------------------------
-// Empty Cart
-// -------------------------------
-async function emptyCart(customer_id) {
-    const formData = new FormData();
-    formData.append("customer_id", customer_id);
-
-    try {
-        const response = await fetch("actions/empty_cart_action.php", {
-            method: "POST",
-            body: formData,
-        });
-
-        const result = await response.json();
-
-        if (result.status === "success") {
-            showMessage("success", "Cart emptied!");
-            loadCartItems();
-        } else {
-            showMessage("danger", result.message);
-        }
-
-    } catch (error) {
-        showMessage("danger", "Could not empty cart.");
-        console.error(error);
-    }
-}
-
-// -------------------------------
-// Load Cart Items (only runs on cart.php / checkout.php)
-// -------------------------------
-async function loadCartItems() {
-    // If page does NOT have cart elements, stop silently
-    const cartContainer = document.getElementById("cart-items");
-    const cartTotal = document.getElementById("cart-total");
-
-    if (!cartContainer || !cartTotal) return;
-
-    try {
-        const response = await fetch("actions/get_cart_action.php");
-        const result = await response.json();
-
-        cartContainer.innerHTML = ""; // clear old items
-
-        if (result.items.length === 0) {
-            cartContainer.innerHTML = "<p>Your cart is empty.</p>";
-            cartTotal.textContent = "0.00";
-            return;
-        }
-
-        result.items.forEach(item => {
-            cartContainer.innerHTML += `
-                <div class="cart-item">
-                    <span>${item.product_name}</span>
-
-                    <input type="number" 
-                           min="1" 
-                           value="${item.qty}" 
-                           onchange="updateCartItem(${item.cart_id}, this.value)">
-
-                    <span>₵${item.total_price}</span>
-
-                    <button onclick="removeCartItem(${item.cart_id})"
-                            class="btn btn-sm btn-danger">
-                        Remove
-                    </button>
-                </div>
-            `;
-        });
-
-        cartTotal.textContent = result.total_price;
-
-    } catch (error) {
-        showMessage("danger", "Unable to load cart.");
-        console.error(error);
-    }
-}
-
-// Run loader **only on pages that have cart elements**
-document.addEventListener("DOMContentLoaded", loadCartItems);

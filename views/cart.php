@@ -4,7 +4,7 @@ session_start();
 require_once "../controllers/cart_controller.php";
 
 // Determine user identity (customer ID or IP for guests)
-$customer_id = isset($_SESSION['customer_id']) ? $_SESSION['customer_id'] : null;
+$customer_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
 $ip_add = $_SERVER['REMOTE_ADDR'];
 
 // Fetch cart items
@@ -15,10 +15,7 @@ $cart_items = get_user_cart_ctr($customer_id ?? $ip_add);
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Your Cart</title>
-    <link rel="stylesheet" href="../assets/cart.css">
-
-    <!-- Bootstrap / CSS Framework if you are using one -->
+    <title>Your Cart</title>     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
     <script src="../js/cart.js"></script>
@@ -31,7 +28,7 @@ $cart_items = get_user_cart_ctr($customer_id ?? $ip_add);
     <?php if (empty($cart_items)) : ?>
         <div class="alert alert-info">
             Your cart is empty.  
-            <a href="shop.php" class="btn btn-primary btn-sm">Continue Shopping</a>
+            <a href="../user/product_page.php" class="btn btn-primary btn-sm">Continue Shopping</a>
         </div>
     <?php else : ?>
 
@@ -90,7 +87,7 @@ $cart_items = get_user_cart_ctr($customer_id ?? $ip_add);
 
         <div class="d-flex justify-content-between mt-4">
             <button class="btn btn-secondary"
-                    onclick="window.location.href='shop.php'">
+                    onclick="window.location.href='../user/product_page.php'">
                 ← Continue Shopping
             </button>
 

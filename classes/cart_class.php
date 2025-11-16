@@ -63,6 +63,33 @@ class cart_class extends db_conn
                 AND (ip_add='$ip_add' OR c_id='$c_id')";
         return $this->db_query($sql);
     }
+    
+    /**
+     * Get cart items by customer ID
+     */
+    function get_cart_by_customer($customer_id) {
+        $sql = "SELECT c.p_id, c.qty, p.product_title, p.product_price, 
+                    p.product_image, p.product_desc
+                FROM cart c
+                JOIN products p ON c.p_id = p.product_id
+                WHERE c.c_id = ?";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$customer_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    function get_cart_by_ip($ip_address) {
+        $sql = "SELECT c.p_id, c.qty, p.product_title, p.product_price, 
+                    p.product_image, p.product_desc
+                FROM cart c
+                JOIN products p ON c.p_id = p.product_id
+                WHERE c.ip_add = ? AND c.c_id IS NULL";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$ip_address]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     /**
      * Retrieve all cart items for a user
@@ -86,6 +113,60 @@ class cart_class extends db_conn
         $sql = "DELETE FROM cart 
                 WHERE (ip_add='$ip_add' OR c_id='$c_id')";
         return $this->db_query($sql);
+    }
+
+    /**
+     * Merge guest cart into user cart upon login
+     */
+
+    function merge_guest_cart($customer_id, $ip_address) {
+        try {
+            // Get all guest cart items for this IP
+            $sql = "SELECT p_id, qty FROM cart WHERE ip_add = ? AND c_id IS NULL";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$ip_address]);
+            $guest_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($guest_items)) {
+                return true; // No guest items to merge
+            }
+
+            // For each guest item, merge with customer cart
+            foreach ($guest_items as $item) {
+                $p_id = $item['p_id'];
+                $qty = $item['qty'];
+
+                // Check if customer already has this product
+                $check_sql = "SELECT qty FROM cart WHERE p_id = ? AND c_id = ?";
+                $check_stmt = $this->db->prepare($check_sql);
+                $check_stmt->execute([$p_id, $customer_id]);
+                $existing = $check_stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($existing) {
+                    // Product exists - add quantities together
+                    $new_qty = $existing['qty'] + $qty;
+                    $update_sql = "UPDATE cart SET qty = ? WHERE p_id = ? AND c_id = ?";
+                    $update_stmt = $this->db->prepare($update_sql);
+                    $update_stmt->execute([$new_qty, $p_id, $customer_id]);
+                } else {
+                    // Product doesn't exist - transfer to customer account
+                    $insert_sql = "INSERT INTO cart (p_id, c_id, qty) VALUES (?, ?, ?)";
+                    $insert_stmt = $this->db->prepare($insert_sql);
+                    $insert_stmt->execute([$p_id, $customer_id, $qty]);
+                }
+            }
+
+            // Delete guest cart items after successful merge
+            $delete_sql = "DELETE FROM cart WHERE ip_add = ? AND c_id IS NULL";
+            $delete_stmt = $this->db->prepare($delete_sql);
+            $delete_stmt->execute([$ip_address]);
+
+            return true;
+
+        } catch (Exception $e) {
+            error_log("Cart merge error: " . $e->getMessage());
+            return false;
+        }
     }
 }
 
