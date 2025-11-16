@@ -1,82 +1,151 @@
 <?php
 session_start();
 
-// Sample cart items for demonstration
-$cartItems = isset($_SESSION['cart']) ? $_SESSION['cart'] : [];
-$totalAmount = 0;
+require_once "../controllers/cart_controller.php";
 
-foreach ($cartItems as $item) {
-    $totalAmount += $item['price'] * $item['quantity'];
+// Get cart items
+$customer_id = isset($_SESSION['customer_id']) ? $_SESSION['customer_id'] : null;
+$ip_add = $_SERVER['REMOTE_ADDR'];
+$cart_items = get_user_cart_ctr($customer_id ?? $ip_add);
+
+// Calculate totals
+$subtotal = 0;
+foreach ($cart_items as $item) {
+    $subtotal += $item['product_price'] * $item['qty'];
 }
+
+$tax = $subtotal * 0.15; // 15% tax (adjust as needed)
+$shipping = 10.00; // Flat shipping fee
+$total = $subtotal + $tax + $shipping;
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout</title>
-    <link rel="stylesheet" href="path/to/your/styles.css">
-    <script src="path/to/checkout.js" defer></script>
+    <title>Checkout | GBVAid Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Checkout Summary</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>Quantity</th>
-                <th>Price</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($cartItems as $item): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($item['name']); ?></td>
-                    <td><?php echo htmlspecialchars($item['quantity']); ?></td>
-                    <td><?php echo htmlspecialchars($item['price']); ?></td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-    <h2>Total: $<?php echo number_format($totalAmount, 2); ?></h2>
-    <button id="simulatePaymentBtn">Simulate Payment</button>
 
-    <div id="paymentModal" style="display:none;">
-        <h2>Confirm Payment</h2>
-        <button id="confirmPaymentBtn">Confirm</button>
-        <button id="cancelPaymentBtn">Cancel</button>
-    </div>
+<div class="container my-5">
+    <h2 class="mb-4">Checkout</h2>
 
-    <div id="responseMessage"></div>
+    <?php if (empty($cart_items)): ?>
+        <div class="alert alert-warning">
+            Your cart is empty. <a href="../user/product_page.php">Continue Shopping</a>
+        </div>
+    <?php else: ?>
 
-    <script>
-        document.getElementById('simulatePaymentBtn').addEventListener('click', function() {
-            document.getElementById('paymentModal').style.display = 'block';
-        });
+        <div class="row">
+            <!-- Order Summary -->
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">Order Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($cart_items as $item): ?>
+                                <tr>
+                                    <td>
+                                        <img src="../uploads/products/<?= htmlspecialchars($item['product_image']) ?>" 
+                                             width="50" class="me-2">
+                                        <?= htmlspecialchars($item['product_title']) ?>
+                                    </td>
+                                    <td>GH₵ <?= number_format($item['product_price'], 2) ?></td>
+                                    <td><?= $item['qty'] ?></td>
+                                    <td>GH₵ <?= number_format($item['product_price'] * $item['qty'], 2) ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-        document.getElementById('confirmPaymentBtn').addEventListener('click', function() {
-            fetch('process_checkout_action.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ cart: <?php echo json_encode($cartItems); ?> })
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('responseMessage').innerText = data.message;
-                document.getElementById('paymentModal').style.display = 'none';
-            })
-            .catch(error => {
-                document.getElementById('responseMessage').innerText = 'Payment failed. Please try again.';
-                document.getElementById('paymentModal').style.display = 'none';
-            });
-        });
+                <!-- Shipping/Billing Form -->
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">Shipping Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="checkoutForm" method="POST" action="../actions/place_order_action.php">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label>Full Name</label>
+                                    <input type="text" name="full_name" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Phone</label>
+                                    <input type="tel" name="phone" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label>Address</label>
+                                <textarea name="address" class="form-control" rows="3" required></textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label>City</label>
+                                    <input type="text" name="city" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Region</label>
+                                    <input type="text" name="region" class="form-control" required>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
-        document.getElementById('cancelPaymentBtn').addEventListener('click', function() {
-            document.getElementById('paymentModal').style.display = 'none';
-        });
-    </script>
+            <!-- Price Summary -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">Price Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal:</span>
+                            <strong>GH₵ <?= number_format($subtotal, 2) ?></strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tax (15%):</span>
+                            <strong>GH₵ <?= number_format($tax, 2) ?></strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Shipping:</span>
+                            <strong>GH₵ <?= number_format($shipping, 2) ?></strong>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-4">
+                            <h5>Total:</h5>
+                            <h5 class="text-success">GH₵ <?= number_format($total, 2) ?></h5>
+                        </div>
+
+                        <button type="submit" form="checkoutForm" class="btn btn-success w-100 mb-2">
+                            Place Order
+                        </button>
+                        <a href="../views/cart.php" class="btn btn-outline-secondary w-100">
+                            Back to Cart
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <?php endif; ?>
+</div>
+
 </body>
 </html>

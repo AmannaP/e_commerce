@@ -26,18 +26,19 @@ function update_cart_item_ctr($product_id, $customer_id, $qty)
 /**
  * Remove a specific product from cart
  */
-function remove_from_cart_ctr($product_id, $customer_id)
-{
-    $cart = new cart_class();
-    return $cart->remove_from_cart($product_id, $customer_id);
+function remove_from_cart_ctr($p_id, $ip_add, $c_id) {
+    require_once(__DIR__ . "/../classes/cart_class.php");
+    $cart = new Cart();
+    return $cart->remove_from_cart($p_id, $ip_add, $c_id);
 }
+
 
 /**
  * Retrieve all cart items for a given user
  */
 function get_user_cart_ctr($identifier) {
     require_once(__DIR__ . "/../classes/cart_class.php");
-    $cart = new Cart();
+    $cart = new cart_class();
     
     // Check if identifier is a customer_id (numeric) or IP address
     if (is_numeric($identifier)) {
@@ -51,10 +52,10 @@ function get_user_cart_ctr($identifier) {
 /**
  * Empty a customer’s entire cart
  */
-function empty_cart_ctr($customer_id)
-{
+function empty_cart_ctr($ip_add, $c_id) {
+    require_once(__DIR__ . "/../classes/cart_class.php");
     $cart = new cart_class();
-    return $cart->empty_cart($customer_id);
+    return $cart->empty_cart($ip_add, $c_id);
 }
 
 /**
@@ -71,7 +72,7 @@ function check_cart_item_ctr($product_id, $customer_id)
  */
 function merge_guest_cart_on_login_ctr($customer_id, $ip_address) {
     require_once(__DIR__ . "/../classes/cart_class.php");
-    $cart = new Cart();
+    $cart = new cart_class();
     return $cart->merge_guest_cart($customer_id, $ip_address);
 }
 
