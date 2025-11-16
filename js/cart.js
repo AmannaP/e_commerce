@@ -21,9 +21,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 method: "POST",
                 body: formData
             })
-            .then(res => res.text())  // Changed to .text() to see raw response
+            .then(res => {
+                console.log("Response status:", res.status);
+                return res.text();  // Get raw text first
+            })
             .then(text => {
-                console.log("Raw response:", text);  // Log the actual response
+                console.log("Raw response:", text);
                 try {
                     const data = JSON.parse(text);
                     console.log("Parsed data:", data);

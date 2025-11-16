@@ -4,7 +4,7 @@ header('Content-Type: application/json');
 
 // Enable error reporting for debugging (remove in production)
 error_reporting(E_ALL);
-ini_set('display_errors', 0);  // Don't display, but log them
+ini_set('display_errors', 1);  // Don't display, but log them
 
 
 // include the cart controller
@@ -16,7 +16,7 @@ try {
     if (!isset($_POST['product_id'])) {
         echo json_encode([
             "status" => "error",
-            "message" => "No product selected."
+            "message" => "No product selected.". json_encode($_POST)
         ]);
         exit();
     }
@@ -36,7 +36,7 @@ try {
     }
 
     // CALL CONTROLLER FUNCTION
-    $result = add_to_cart_controller($p_id, $ip_add, $c_id, $qty);
+    $result = add_to_cart_ctr($p_id, $ip_add, $c_id, $qty);
 
     if ($result) {
         echo json_encode([
@@ -53,7 +53,9 @@ try {
 } catch (Exception $e) {
     echo json_encode([
         "status" => "error",
-        "message" => "Server error: " . $e->getMessage()
+        "message" => "Server error: " . $e->getMessage(),
+        "file" => $e->getFile(),
+        "line" => $e->getLine()
     ]);
 }
 ?>

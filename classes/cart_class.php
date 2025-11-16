@@ -11,9 +11,26 @@ class cart_class extends db_conn
      */
     public function add_to_cart($p_id, $ip_add, $c_id, $qty)
     {
-        $sql = "INSERT INTO cart (p_id, ip_add, c_id, qty) 
-                VALUES ('$p_id', '$ip_add', '$c_id', '$qty')";
-        return $this->db_query($sql);
+        try {
+            if ($c_id !== null) {
+                // Logged-in user
+                $sql = "INSERT INTO cart (p_id, c_id, qty) 
+                        VALUES (?, ?, ?)
+                        ON DUPLICATE KEY UPDATE qty = qty + ?";
+                $stmt = $this->db->prepare($sql);
+                return $stmt->execute([$p_id, $c_id, $qty, $qty]);
+            } else {
+                // Guest user
+                $sql = "INSERT INTO cart (p_id, ip_add, qty) 
+                        VALUES (?, ?, ?)
+                        ON DUPLICATE KEY UPDATE qty = qty + ?";
+                $stmt = $this->db->prepare($sql);
+                return $stmt->execute([$p_id, $ip_add, $qty, $qty]);
+            }
+        } catch (Exception $e) {
+            error_log("Add to cart error: " . $e->getMessage());
+            return false;
+        }
     }
 
     /**
@@ -63,7 +80,7 @@ class cart_class extends db_conn
                 AND (ip_add='$ip_add' OR c_id='$c_id')";
         return $this->db_query($sql);
     }
-    
+
     /**
      * Get cart items by customer ID
      */
