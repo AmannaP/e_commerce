@@ -1,5 +1,7 @@
 <?php
 session_start();
+echo "Session ID: " . ($_SESSION['id'] ?? 'NOT SET') . "<br>";
+echo "Logged in: " . (isset($_SESSION['id']) ? 'YES' : 'NO') . "<br>";
 
 require_once "../controllers/cart_controller.php";
 

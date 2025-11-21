@@ -10,7 +10,7 @@ session_start();
 $response = array();
 
 // TODO: Check if the user is already logged in and redirect to the dashboard
-if (isset($_SESSION['customer_id'])) {
+if (isset($_SESSION['id'])) {
     $response['status'] = 'error';
     $response['message'] = 'You are already logged in';
     echo json_encode($response);

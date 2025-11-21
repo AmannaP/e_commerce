@@ -63,25 +63,35 @@ if (!class_exists('db_conn')) {
          * @param string $sqlQuery
          * @return boolean
          **/
-        function db_query($sqlQuery)
+        function db_query($sql, $params = [])
         {
-            if (!$this->db_connect()) {
+            try {
+                error_log("db_query - SQL: $sql");
+                error_log("db_query - Params: " . json_encode($params));
+                
+                $stmt = $this->db->prepare($sql);
+                
+                if (!$stmt) {
+                    error_log("db_query - Failed to prepare statement");
+                    return false;
+                }
+                
+                if (!empty($params)) {
+                    $result = $stmt->execute($params);
+                    error_log("db_query - Execute result: " . ($result ? 'true' : 'false'));
+                } else {
+                    $result = $stmt->execute();
+                    error_log("db_query - Execute result: " . ($result ? 'true' : 'false'));
+                }
+                
+                return $stmt;
+                
+            } catch (PDOException $e) {
+                error_log("db_query - PDO Exception: " . $e->getMessage());
                 return false;
-            } elseif ($this->db == null) {
-                return false;
-            }
-
-            //run query 
-            $this->results = mysqli_query($this->db, $sqlQuery);
-
-            if ($this->results == false) {
-                return false;
-            } else {
-                return true;
             }
         }
 
-        //execute a query for INSERT, UPDATE, DELETE statements
         /**
          * Query the Database for INSERT, UPDATE, DELETE statements
          * @param string $sqlQuery

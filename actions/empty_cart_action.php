@@ -5,8 +5,8 @@ header('Content-Type: application/json');
 
 try {
     // Determine if logged in or guest
-    if (isset($_SESSION['customer_id']) && !empty($_SESSION['customer_id'])) {
-        $c_id = $_SESSION['customer_id'];
+    if (isset($_SESSION['id']) && !empty($_SESSION['id'])) {
+        $c_id = $_SESSION['id'];
         $ip_add = null;
     } else {
         $c_id = null;

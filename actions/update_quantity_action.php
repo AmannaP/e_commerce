@@ -26,8 +26,8 @@ if ($qty <= 0) {
 }
 
 // Determine if user is logged in or guest
-if (isset($_SESSION['customer_id'])) {
-    $c_id = $_SESSION['customer_id'];
+if (isset($_SESSION['id'])) {
+    $c_id = $_SESSION['id'];
     $ip_add = null;
 } else {
     $c_id = null;

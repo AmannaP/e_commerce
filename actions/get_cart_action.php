@@ -7,7 +7,7 @@ require_once '../controllers/cart_controller.php';
 require_once '../controllers/product_controller.php';
 
 // identify user (prefer logged-in)
-$customer_id = $_SESSION['customer_id'] ?? null;
+$customer_id = $_SESSION['id'] ?? null;
 $ip_add = $_SERVER['REMOTE_ADDR'] ?? null;
 
 $items = get_user_cart_ctr($customer_id ?? $ip_add); // adapt to your controller naming

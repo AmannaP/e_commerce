@@ -6,13 +6,13 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Get cart count
 require_once("../controllers/cart_controller.php");
-$customer_id = isset($_SESSION['customer_id']) ? $_SESSION['customer_id'] : null;
+$customer_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
 $ip_add = $_SERVER['REMOTE_ADDR'];
 $cart_items = get_user_cart_ctr($customer_id ?? $ip_add);
 $cart_count = count($cart_items);
 
-$is_logged_in = isset($_SESSION['customer_id']);
-$customer_name = $is_logged_in ? $_SESSION['customer_name'] : 'Guest';
+$is_logged_in = isset($_SESSION['id']);
+$customer_name = $is_logged_in ? $_SESSION['name'] : 'Guest';
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">

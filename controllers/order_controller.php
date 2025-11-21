@@ -8,7 +8,7 @@ class OrderController {
     private $order;
 
     public function __construct() {
-        $this->order = new OrderClass();
+        $this->order = new order_class();
     }
 
     /**

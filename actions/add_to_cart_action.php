@@ -25,9 +25,9 @@ try {
     $qty = isset($_POST['qty']) ? intval($_POST['qty']) : 1;
 
     // Handle logged-in vs guest users
-    if (isset($_SESSION['customer_id']) && !empty($_SESSION['customer_id'])) {
+    if (isset($_SESSION['id']) && !empty($_SESSION['id'])) {
         // Logged-in user
-        $c_id = $_SESSION['customer_id'];
+        $c_id = $_SESSION['id'];
         $ip_add = null;
     } else {
         // Guest user

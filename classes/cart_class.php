@@ -74,15 +74,47 @@ class cart_class extends db_conn
      */
     public function update_quantity($p_id, $ip_add, $c_id, $qty)
     {
-        $sql = "UPDATE cart 
-                SET qty='$qty'
-                WHERE p_id='$p_id' 
-                AND (ip_add='$ip_add' OR c_id='$c_id')";
-        return $this->db_query($sql);
+        error_log("Cart Class - update_quantity called with: p_id=$p_id, ip_add=$ip_add, c_id=$c_id, qty=$qty");
+        
+        try {
+            if ($c_id !== null && $c_id > 0) {
+                // Logged-in user
+                $sql = "UPDATE cart 
+                        SET qty = ? 
+                        WHERE p_id = ? AND c_id = ?";
+                
+                error_log("Cart Class - SQL for logged-in user: $sql");
+                error_log("Cart Class - Parameters: qty=$qty, p_id=$p_id, c_id=$c_id");
+                
+                $stmt = $this->db_query($sql, [$qty, $p_id, $c_id]);
+            } else {
+                // Guest user
+                $sql = "UPDATE cart 
+                        SET qty = ? 
+                        WHERE p_id = ? AND ip_add = ? AND (c_id IS NULL OR c_id = 0)";
+                
+                error_log("Cart Class - SQL for guest user: $sql");
+                error_log("Cart Class - Parameters: qty=$qty, p_id=$p_id, ip_add=$ip_add");
+                
+                $stmt = $this->db_query($sql, [$qty, $p_id, $ip_add]);
+            }
+            
+            if ($stmt === false) {
+                error_log("Cart Class - db_query returned false");
+                return false;
+            }
+            
+            error_log("Cart Class - Statement executed successfully");
+            return true;
+            
+        } catch (Exception $e) {
+            error_log("Cart Class - Exception in update_quantity: " . $e->getMessage());
+            return false;
+        }
     }
 
     /**
-     * Increment existing quantity (used for duplicates)
+     * Increment existing quantity
      */
     public function increment_quantity($p_id, $ip_add, $c_id, $added_qty)
     {

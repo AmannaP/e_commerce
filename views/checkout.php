@@ -4,7 +4,7 @@ session_start();
 require_once "../controllers/cart_controller.php";
 
 // Get cart items
-$customer_id = isset($_SESSION['customer_id']) ? $_SESSION['customer_id'] : null;
+$customer_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
 $ip_add = $_SERVER['REMOTE_ADDR'];
 $cart_items = get_user_cart_ctr($customer_id ?? $ip_add);
 
@@ -14,8 +14,8 @@ foreach ($cart_items as $item) {
     $subtotal += $item['product_price'] * $item['qty'];
 }
 
-$tax = $subtotal * 0.15; // 15% tax (adjust as needed)
-$shipping = 10.00; // Flat shipping fee
+$tax = $subtotal * 0.15;
+$shipping = 10.00;
 $total = $subtotal + $tax + $shipping;
 ?>
 
@@ -72,37 +72,43 @@ $total = $subtotal + $tax + $shipping;
                     </div>
                 </div>
 
-                <!-- Shipping/Billing Form -->
+                <!-- Shipping Form -->
                 <div class="card">
                     <div class="card-header bg-dark text-white">
                         <h5 class="mb-0">Shipping Information</h5>
                     </div>
                     <div class="card-body">
-                        <form id="checkoutForm" method="POST" action="../actions/place_order_action.php">
+                        <!-- IMPORTANT: Make sure form has id="checkoutForm" -->
+                        <form id="checkoutForm" method="POST">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label>Full Name</label>
+                                    <label>Full Name *</label>
                                     <input type="text" name="full_name" class="form-control" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label>Phone</label>
+                                    <label>Phone *</label>
                                     <input type="tel" name="phone" class="form-control" required>
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label>Address</label>
+                                <label>Address *</label>
                                 <textarea name="address" class="form-control" rows="3" required></textarea>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label>City</label>
+                                    <label>City *</label>
                                     <input type="text" name="city" class="form-control" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label>Region</label>
+                                    <label>Region *</label>
                                     <input type="text" name="region" class="form-control" required>
                                 </div>
                             </div>
+                            
+                            <!-- Submit button inside the form -->
+                            <button type="submit" class="btn btn-success btn-lg w-100 mt-3">
+                                Place Order
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -133,10 +139,7 @@ $total = $subtotal + $tax + $shipping;
                             <h5 class="text-success">GH₵ <?= number_format($total, 2) ?></h5>
                         </div>
 
-                        <button type="submit" form="checkoutForm" class="btn btn-success w-100 mb-2">
-                            Place Order
-                        </button>
-                        <a href="../views/cart.php" class="btn btn-outline-secondary w-100">
+                        <a href="cart.php" class="btn btn-outline-secondary w-100">
                             Back to Cart
                         </a>
                     </div>
@@ -146,6 +149,53 @@ $total = $subtotal + $tax + $shipping;
 
     <?php endif; ?>
 </div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Checkout JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("Checkout JavaScript loaded");
+    
+    const checkoutForm = document.getElementById('checkoutForm');
+    
+    if (!checkoutForm) {
+        console.error("ERROR: checkoutForm not found!");
+        return;
+    }
+    
+    checkoutForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        console.log("Form submitted!");
+        
+        const formData = new FormData(this);
+        const submitButton = this.querySelector('button[type="submit"]');
+        
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+        
+        fetch('../actions/process_checkout_action.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log("Response:", data);
+            
+            if (data.status === 'success') {
+                window.location.href = `payment_success.php?order_id=${data.order_id}&invoice=${data.invoice_no}&amount=${data.total_amount}&currency=${data.currency}`;
+            } else {
+                window.location.href = `payment_failed.php?error=${encodeURIComponent(data.message)}`;
+            }
+        })
+        .catch(err => {
+            console.error('Error:', err);
+            window.location.href = `payment_failed.php?error=${encodeURIComponent('An error occurred during checkout.')}`;
+        });
+    });
+});
+</script>
 
 </body>
 </html>
