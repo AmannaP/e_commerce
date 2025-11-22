@@ -52,8 +52,8 @@ $total = $subtotal + $tax + $shipping;
 <body>
 
 <?php 
-if (file_exists('includes/navbar.php')) {
-    include 'includes/navbar.php';
+if (file_exists('views/navbar.php')) {
+    include 'views/navbar.php';
 }
 ?>
 
