@@ -26,21 +26,9 @@ ob_start();
  * @return bool
  */
 function checkLogin() {
-    if (!isset($_SESSION['id']) || empty($_SESSION['id'])) {
-        header("Location: ../user/login.php");
-        exit();
-    }
+   return isset($_SESSION['id']);
 }
 
-// Get current user name
-function get_user_name() {
-    return $_SESSION['name'] ?? 'Guest';
-}
-
-// Check if user is logged in (returns boolean)
-function is_logged_in() {
-    return isset($_SESSION['id']) && !empty($_SESSION['id']);
-}
 /**
  * Force login: redirect to login page if user not logged in
  */
