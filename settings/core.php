@@ -3,6 +3,18 @@
 
 // Start session only if it hasn't been started
 if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.cookie_httponly', 1);
+    ini_set('session.use_only_cookies', 1);
+    ini_set('session.cookie_secure', 0); // Set to 1 if using HTTPS
+    ini_set('session.cookie_samesite', 'Lax');
+    
+    // Set session save path (important for some shared hosting)
+    $session_path = __DIR__ . '/../sessions';
+    if (!file_exists($session_path)) {
+        mkdir($session_path, 0755, true);
+    }
+    ini_set('session.save_path', $session_path);
+    
     session_start();
 }
 
@@ -14,9 +26,21 @@ ob_start();
  * @return bool
  */
 function checkLogin() {
-   return isset($_SESSION['id']);
+    if (!isset($_SESSION['id']) || empty($_SESSION['id'])) {
+        header("Location: ../user/login.php");
+        exit();
+    }
 }
 
+// Get current user name
+function get_user_name() {
+    return $_SESSION['name'] ?? 'Guest';
+}
+
+// Check if user is logged in (returns boolean)
+function is_logged_in() {
+    return isset($_SESSION['id']) && !empty($_SESSION['id']);
+}
 /**
  * Force login: redirect to login page if user not logged in
  */

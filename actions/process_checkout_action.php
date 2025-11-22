@@ -2,6 +2,10 @@
 session_start();
 
 header("Content-Type: application/json");
+// Enable error logging
+error_log("Checkout - Session data: " . json_encode($_SESSION));
+error_log("Checkout - POST data: " . json_encode($_POST));
+
 
 require_once(__DIR__ . "/../controllers/cart_controller.php");
 require_once(__DIR__ . "/../controllers/order_controller.php");
@@ -10,17 +14,27 @@ require_once(__DIR__ . "/../controllers/order_controller.php");
 if (!isset($_SESSION['id']) || empty($_SESSION['id'])) {
     echo json_encode([
         "status" => "error",
-        "message" => "You must be logged in to complete checkout."
+        "message" => "You must be logged in to complete checkout.",
+        "debug" => [
+            "session_keys" => array_keys($_SESSION),
+            "id_isset" => isset($_SESSION['id']),
+            "id_value" => $_SESSION['id'] ?? 'not set',
+            "session_id" => session_id()
+        ]
     ]);
     exit();
 }
 
 $customer_id = $_SESSION['id'];
-$currency = "GHc"; // Match your database: GHc not GHC
+$currency = "GHc";
+
+error_log("Checkout - Customer ID: $customer_id");
+
 
 try {
     // Get cart items
     $cart_items = get_user_cart_ctr($customer_id);
+    error_log("Checkout - Cart items count: " . count($cart_items));
 
     if (!$cart_items || count($cart_items) === 0) {
         echo json_encode([
@@ -42,6 +56,7 @@ try {
     $order_status = 'Pending';
     $payment_date = date('Y-m-d H:i:s');
 
+    error_log("Checkout - Total amount: $total_amount");
     // Initialize OrderController
     $orderController = new OrderController();
 
@@ -52,6 +67,9 @@ try {
         'order_date' => $order_date,
         'order_status' => $order_status
     ]);
+
+    error_log("Checkout - Order created with ID: $order_id");
+
 
     if (!$order_id) {
         echo json_encode([
@@ -74,12 +92,9 @@ try {
             'unit_price' => $unit_price
         ]);
 
+
         if (!$detail_added) {
-            echo json_encode([
-                "status" => "error",
-                "message" => "Failed to add order details for product ID $product_id."
-            ]);
-            exit;
+            error_log("Checkout - Failed to add order detail for product: $product_id");
         }
     }
 
@@ -92,6 +107,8 @@ try {
         'payment_date' => $payment_date
     ]);
 
+    error_log("Checkout - Payment saved: " . ($payment_saved ? 'yes' : 'no'));
+
     if (!$payment_saved) {
         echo json_encode([
             "status" => "error",
@@ -102,6 +119,7 @@ try {
 
     // Empty the customer's cart
     empty_cart_ctr(null, $customer_id);
+    error_log("Checkout - Success! Order ID: $order_id");
 
     // Success Response
     echo json_encode([
@@ -114,9 +132,11 @@ try {
     ]);
 
 } catch (Exception $e) {
+    error_log("Checkout - Exception: " . $e->getMessage());
     echo json_encode([
         "status" => "error",
-        "message" => "Server error: " . $e->getMessage()
+        "message" => "Server error: " . $e->getMessage(),
+        "trace" => $e->getTraceAsString()
     ]);
 }
 
