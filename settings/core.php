@@ -10,11 +10,6 @@ if (session_status() === PHP_SESSION_NONE) {
     
     // Set session save path (important for some shared hosting)
     $session_path = __DIR__ . '/../sessions';
-    if (!file_exists($session_path)) {
-        mkdir($session_path, 0755, true);
-    }
-    ini_set('session.save_path', $session_path);
-    
     session_start();
 }
 

@@ -33,85 +33,80 @@ if (!class_exists('db_conn')) {
          **/
         function db_connect()
         {
-            //connection
-            $this->db = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
-
-            //test the connection
-            if (mysqli_connect_errno()) {
-                return false;
-            } else {
+            if ($this->db !== null) {
                 return true;
             }
-        }
-
-        function db_conn()
-        {
-            //connection
-            $this->db = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
-
-            //test the connection
-            if (mysqli_connect_errno()) {
+            try {
+                // PDO Connection
+                $this->db = new PDO("mysql:host=" . DB_SERVER . ";dbname=" . DB_NAME, DB_USERNAME, DB_PASSWORD);
+                // Set error mode to exception
+                $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                return true;
+            } catch (PDOException $e) {
+                error_log("DB Connection failed: " . $e->getMessage());
                 return false;
-            } else {
-                return $this->db;
             }
         }
 
+        /**
+         * Return the PDO connection object
+         */
+        function db_conn()
+        {
+            if ($this->db_connect()) {
+                return $this->db;
+            }
+            return false;
+        }
         //execute a query for SELECT statements
         /**
          * Query the Database for SELECT statements
          * @param string $sqlQuery
          * @return boolean
          **/
-        function db_query($sql, $params = [])
+        function db_query($sqlQuery, $params = [])
         {
+            if (!$this->db_connect()) return false;
+
             try {
-                error_log("db_query - SQL: $sql");
-                error_log("db_query - Params: " . json_encode($params));
-                
-                $stmt = $this->db->prepare($sql);
-                
-                if (!$stmt) {
-                    error_log("db_query - Failed to prepare statement");
-                    return false;
-                }
-                
-                if (!empty($params)) {
-                    $result = $stmt->execute($params);
-                    error_log("db_query - Execute result: " . ($result ? 'true' : 'false'));
+                // Prepare handles sql injection automatically if params are used
+                // But for compatibility with your existing string-based SQL, we use query() if no params
+                if (empty($params)) {
+                    $this->results = $this->db->query($sqlQuery);
                 } else {
-                    $result = $stmt->execute();
-                    error_log("db_query - Execute result: " . ($result ? 'true' : 'false'));
+                    $stmt = $this->db->prepare($sqlQuery);
+                    $stmt->execute($params);
+                    $this->results = $stmt;
                 }
-                
-                return $stmt;
-                
+                return true;
             } catch (PDOException $e) {
-                error_log("db_query - PDO Exception: " . $e->getMessage());
+                error_log("Query Failed: " . $e->getMessage());
                 return false;
             }
         }
+
 
         /**
          * Query the Database for INSERT, UPDATE, DELETE statements
          * @param string $sqlQuery
          * @return boolean
          **/
-        function db_write_query($sqlQuery)
+        function db_write_query($sqlQuery, $params = [])
         {
-            if (!$this->db_connect()) {
-                return false;
-            } elseif ($this->db == null) {
-                return false;
-            }
+            if (!$this->db_connect()) return false;
 
-            //run query 
-            $result = mysqli_query($this->db, $sqlQuery);
-
-            if ($result == false) {
+            try {
+                if (empty($params)) {
+                    // exec() returns number of affected rows
+                    $count = $this->db->exec($sqlQuery);
+                    return ($count !== false);
+                } else {
+                    $stmt = $this->db->prepare($sqlQuery);
+                    return $stmt->execute($params);
+                }
+            } catch (PDOException $e) {
+                error_log("Write Query Failed: " . $e->getMessage());
                 return false;
-            } else {
-                return true;
             }
         }
 
@@ -123,12 +118,8 @@ if (!class_exists('db_conn')) {
          **/
         function db_fetch_one($sql)
         {
-            // if executing query returns false
-            if (!$this->db_query($sql)) {
-                return false;
-            }
-            //return a record
-            return mysqli_fetch_assoc($this->results);
+            if (!$this->db_query($sql)) return false;
+            return $this->results->fetch(PDO::FETCH_ASSOC);
         }
 
         //fetch all records
@@ -139,12 +130,8 @@ if (!class_exists('db_conn')) {
          **/
         function db_fetch_all($sql)
         {
-            // if executing query returns false
-            if (!$this->db_query($sql)) {
-                return false;
-            }
-            //return all records
-            return mysqli_fetch_all($this->results, MYSQLI_ASSOC);
+            if (!$this->db_query($sql)) return false;
+            return $this->results->fetchAll(PDO::FETCH_ASSOC);
         }
 
         //count data
@@ -154,20 +141,21 @@ if (!class_exists('db_conn')) {
          **/
         function db_count()
         {
-            //check if result was set
-            if ($this->results == null) {
-                return false;
-            } elseif ($this->results == false) {
-                return false;
+            if ($this->results) {
+                return $this->results->rowCount();
             }
-
-            //return count
-            return mysqli_num_rows($this->results);
+            return false;
         }
 
+        /**
+         * Get last inserted ID
+         */
         function last_insert_id()
         {
-            return mysqli_insert_id($this->db);
+            if ($this->db) {
+                return $this->db->lastInsertId();
+            }
+            return false;
         }
     }
 }
