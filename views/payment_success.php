@@ -1,152 +1,231 @@
 <?php
-session_start();
+require_once '../settings/core.php';
+require_once '../controllers/order_controller.php';
 
-// Check if user is logged in
-if (!isset($_SESSION['id'])) {
-    header("Location: ../user/login.php");
-    exit();
-}
+requireLogin('../login/login.php');
 
-// Get order details from URL parameters
-$order_id = isset($_GET['order_id']) ? htmlspecialchars($_GET['order_id']) : 'N/A';
-$invoice_no = isset($_GET['invoice']) ? htmlspecialchars($_GET['invoice']) : 'N/A';
-$amount = isset($_GET['amount']) ? htmlspecialchars($_GET['amount']) : '0.00';
-$currency = isset($_GET['currency']) ? htmlspecialchars($_GET['currency']) : 'GHc';
-$customer_name = isset($_SESSION['name']) ? htmlspecialchars($_SESSION['name']) : 'Customer';
+$customer_id = getUserId();
+$invoice_no = isset($_GET['invoice']) ? htmlspecialchars($_GET['invoice']) : '';
+$reference = isset($_GET['reference']) ? htmlspecialchars($_GET['reference']) : '';
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Payment Successful | GBVAid Store</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - GBVAid</title>
     <style>
-        .success-animation {
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #ffffff; }
+        
+        .navbar { background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%); padding: 20px 0; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05); }
+        .nav-container { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 40px; }
+        .logo { font-family: 'Cormorant Garamond', serif; font-size: 28px; background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+        
+        .container { max-width: 900px; margin: 60px auto; padding: 0 20px; }
+        
+        .success-box { 
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); 
+            border: 2px solid #6ee7b7; 
+            border-radius: 20px; 
+            padding: 50px 40px; 
             text-align: center;
-            padding: 40px;
         }
-        .success-icon {
-            font-size: 80px;
-            color: #28a745;
-            animation: scaleIn 0.5s ease-in-out;
+        
+        .success-icon { 
+            font-size: 80px; 
+            margin-bottom: 20px; 
+            animation: bounce 1s ease-in-out;
         }
-        @keyframes scaleIn {
-            0% { transform: scale(0); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
-        .order-summary-box {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
+        
+        h1 { 
+            font-family: 'Cormorant Garamond', serif; 
+            font-size: 3rem; 
+            color: #065f46; 
+            margin-bottom: 10px; 
+        }
+        
+        .subtitle { 
+            font-size: 18px; 
+            color: #047857; 
+            margin-bottom: 30px; 
+        }
+        
+        .order-details { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 12px; 
+            margin: 30px 0; 
+            text-align: left;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .detail-row { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 12px 0; 
+            border-bottom: 1px solid #f3f4f6;
+            color: #374151;
+        }
+        
+        .detail-row:last-child { border-bottom: none; }
+        .detail-label { font-weight: 600; }
+        .detail-value { color: #6b7280; word-break: break-all; }
+        
+        .btn { 
+            padding: 16px 40px; 
+            border: none; 
+            border-radius: 50px; 
+            font-size: 16px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.4s ease; 
+            text-decoration: none; 
+            display: inline-block;
+            margin: 0 10px;
+        }
+        
+        .btn-primary { 
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); 
+            color: white; 
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3); 
+        }
+        
+        .btn-primary:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 12px 35px rgba(220, 38, 38, 0.4); 
+        }
+        
+        .btn-secondary { 
+            background: white; 
+            color: #374151; 
+            border: 2px solid #e5e7eb; 
+        }
+        
+        .btn-secondary:hover { background: #f9fafb; }
+        
+        .buttons-container { 
+            display: flex; 
+            justify-content: center; 
+            margin-top: 40px; 
+            flex-wrap: wrap;
+        }
+        
+        .confirmation-message { 
+            background: #eff6ff; 
+            border: 2px solid #3b82f6; 
+            padding: 20px; 
+            border-radius: 12px; 
+            color: #1e40af;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="../index.php" class="logo">GBVAid</a>
+            <div style="display: flex; gap: 20px;">
+                <a href="../user/product_page.php" style="color: #374151; text-decoration: none;">← Continue Shopping</a>
+            </div>
+        </div>
+    </nav>
 
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-lg">
-                <div class="card-body">
-                    <!-- Success Animation -->
-                    <div class="success-animation">
-                        <i class="bi bi-check-circle-fill success-icon"></i>
-                        <h2 class="mt-4 text-success">Payment Successful!</h2>
-                        <p class="text-muted">Thank you for your order, <?= $customer_name ?>!</p>
-                    </div>
-
-                    <hr>
-
-                    <!-- Order Summary -->
-                    <div class="order-summary-box">
-                        <h5 class="mb-4"><i class="bi bi-receipt me-2"></i>Order Summary</h5>
-                        
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <strong>Order ID:</strong>
-                            </div>
-                            <div class="col-6 text-end">
-                                <span class="badge bg-primary">#<?= $order_id ?></span>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <strong>Invoice Number:</strong>
-                            </div>
-                            <div class="col-6 text-end">
-                                <?= $invoice_no ?>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <strong>Order Date:</strong>
-                            </div>
-                            <div class="col-6 text-end">
-                                <?= date('F d, Y - h:i A') ?>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <strong>Payment Status:</strong>
-                            </div>
-                            <div class="col-6 text-end">
-                                <span class="badge bg-success">Paid</span>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <strong>Order Status:</strong>
-                            </div>
-                            <div class="col-6 text-end">
-                                <span class="badge bg-warning text-dark">Pending</span>
-                            </div>
-                        </div>
-
-                        <hr>
-
-                        <div class="row">
-                            <div class="col-6">
-                                <h5>Total Amount:</h5>
-                            </div>
-                            <div class="col-6 text-end">
-                                <h5 class="text-success"><?= $currency ?> <?= $amount ?></h5>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Info Alert -->
-                    <div class="alert alert-info">
-                        <i class="bi bi-info-circle me-2"></i>
-                        <strong>What's Next?</strong><br>
-                        Your order is being processed. You will receive a confirmation email shortly with tracking details.
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="d-grid gap-2 mt-4">
-                        <a href="../user/product_page.php" class="btn btn-primary btn-lg">
-                            <i class="bi bi-shop me-2"></i>Continue Shopping
-                        </a>
-                        <a href="my_orders.php" class="btn btn-outline-secondary btn-lg">
-                            <i class="bi bi-list-ul me-2"></i>View My Orders
-                        </a>
-                        <button onclick="window.print()" class="btn btn-outline-dark">
-                            <i class="bi bi-printer me-2"></i>Print Receipt
-                        </button>
-                    </div>
+    <div class="container">
+        <div class="success-box">
+            <div class="success-icon">🎉</div>
+            <h1>Order Successful!</h1>
+            <p class="subtitle">Your payment has been processed successfully</p>
+            
+            <div class="confirmation-message">
+                <strong>✓ Payment Confirmed</strong><br>
+                Thank you for your purchase! Your order has been confirmed and will be processed shortly.
+            </div>
+            
+            <div class="order-details">
+                <div class="detail-row">
+                    <span class="detail-label">Invoice Number</span>
+                    <span class="detail-value"><?php echo $invoice_no; ?></span>
                 </div>
+                <div class="detail-row">
+                    <span class="detail-label">Payment Reference</span>
+                    <span class="detail-value"><?php echo $reference; ?></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Order Date</span>
+                    <span class="detail-value"><?php echo date('F j, Y'); ?></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Status</span>
+                    <span class="detail-value" style="color: #059669; font-weight: 600;">Paid ✓</span>
+                </div>
+            </div>
+            
+            <div class="buttons-container">
+                <a href="my_orders.php" class="btn btn-primary">📦 View My Orders</a>
+                <a href="../user/product_page.php" class="btn btn-secondary">Continue Shopping</a>
             </div>
         </div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Confetti effect
+        function createConfetti() {
+            const colors = ['#dc2626', '#ef4444', '#10b981', '#3b82f6', '#f59e0b'];
+            const confettiCount = 50;
+            
+            for (let i = 0; i < confettiCount; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.style.cssText = `
+                        position: fixed;
+                        width: 10px;
+                        height: 10px;
+                        background: ${colors[Math.floor(Math.random() * colors.length)]};
+                        left: ${Math.random() * 100}%;
+                        top: -10px;
+                        opacity: 1;
+                        transform: rotate(${Math.random() * 360}deg);
+                        z-index: 10001;
+                        pointer-events: none;
+                    `;
+                    
+                    document.body.appendChild(confetti);
+                    
+                    const duration = 2000 + Math.random() * 1000;
+                    const startTime = Date.now();
+                    
+                    function animateConfetti() {
+                        const elapsed = Date.now() - startTime;
+                        const progress = elapsed / duration;
+                        
+                        if (progress < 1) {
+                            const top = progress * (window.innerHeight + 50);
+                            const wobble = Math.sin(progress * 10) * 50;
+                            
+                            confetti.style.top = top + 'px';
+                            confetti.style.left = `calc(${confetti.style.left} + ${wobble}px)`;
+                            confetti.style.opacity = 1 - progress;
+                            confetti.style.transform = `rotate(${progress * 720}deg)`;
+                            
+                            requestAnimationFrame(animateConfetti);
+                        } else {
+                            confetti.remove();
+                        }
+                    }
+                    
+                    animateConfetti();
+                }, i * 30);
+            }
+        }
+        
+        // Trigger confetti on page load
+        window.addEventListener('load', createConfetti);
+    </script>
 </body>
 </html>

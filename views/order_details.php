@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+// 1. FIX: Set Timezone to Ghana so the date() function displays correctly
+date_default_timezone_set('Africa/Accra');
+
 // Check if user is logged in
 if (!isset($_SESSION['id'])) {
     header("Location: ../user/login.php");
@@ -74,9 +77,7 @@ if (file_exists('includes/navbar.php')) {
     </div>
 
     <div class="row">
-        <!-- Order Information -->
         <div class="col-md-8">
-            <!-- Order Status Card -->
             <div class="card mb-4">
                 <div class="card-header bg-dark text-white">
                     <h5 class="mb-0">Order Information</h5>
@@ -102,8 +103,13 @@ if (file_exists('includes/navbar.php')) {
                         </div>
                         <div class="col-md-6 mb-3">
                             <strong>Order Date:</strong><br>
-                            <?= date('F d, Y - h:i A', strtotime($order_summary['order_date'])) ?>
-                        </div>
+                            <?php 
+                                // Create a Date object from the database string
+                                $date = new DateTime($order_summary['order_date']);
+                                // Force the timezone to Ghana/GMT
+                                $date->setTimezone(new DateTimeZone('Africa/Accra'));
+                                echo $date->format('F d, Y - h:i A'); 
+                            ?>                        </div>
                         <div class="col-md-6 mb-3">
                             <strong>Payment Status:</strong><br>
                             <?php if (isset($order_summary['amt'])): ?>
@@ -116,7 +122,6 @@ if (file_exists('includes/navbar.php')) {
                 </div>
             </div>
 
-            <!-- Order Items -->
             <div class="card">
                 <div class="card-header bg-dark text-white">
                     <h5 class="mb-0">Order Items</h5>
@@ -154,7 +159,6 @@ if (file_exists('includes/navbar.php')) {
             </div>
         </div>
 
-        <!-- Order Summary -->
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header bg-dark text-white">
@@ -183,14 +187,13 @@ if (file_exists('includes/navbar.php')) {
                     <div class="alert alert-success mb-0">
                         <small>
                             <i class="bi bi-check-circle me-2"></i>
-                            Paid on <?= date('M d, Y', strtotime($order_summary['payment_date'])) ?>
+                            Paid on <?= date('M d, Y - h:i A', strtotime($order_summary['payment_date'])) ?>
                         </small>
                     </div>
                     <?php endif; ?>
                 </div>
             </div>
 
-            <!-- Need Help? -->
             <div class="card mt-3">
                 <div class="card-body text-center">
                     <i class="bi bi-headset" style="font-size: 40px; color: #6c757d;"></i>

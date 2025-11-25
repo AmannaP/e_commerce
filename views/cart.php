@@ -1,8 +1,5 @@
 <?php
 session_start();
-echo "Session ID: " . ($_SESSION['id'] ?? 'NOT SET') . "<br>";
-echo "Logged in: " . (isset($_SESSION['id']) ? 'YES' : 'NO') . "<br>";
-
 require_once "../controllers/cart_controller.php";
 
 // Determine user identity (customer ID or IP for guests)
@@ -21,6 +18,28 @@ $cart_items = get_user_cart_ctr($customer_id ?? $ip_add);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
     <script src="../js/cart.js"></script>
+    <style>
+        /* 1. Set the entire page background to purple */
+        body {
+            background-color: #c453eaff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* 2. Style the container to be white so text is readable */
+        .cart-container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+
+        /* Optional: Add a subtle hover effect to table rows */
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
 </head>
 <body>
 
@@ -77,6 +96,7 @@ $cart_items = get_user_cart_ctr($customer_id ?? $ip_add);
 
                     <td>
                         <button class="btn btn-danger btn-sm"
+                                style="background-color: white; color: black; border: 1px solid #ced4da;"
                                 onclick="removeFromCart(<?= $item['p_id'] ?>)">
                             Remove
                         </button>
@@ -89,16 +109,19 @@ $cart_items = get_user_cart_ctr($customer_id ?? $ip_add);
 
         <div class="d-flex justify-content-between mt-4">
             <button class="btn btn-secondary"
+            style="background-color: white; color: black; border: 1px solid #ced4da;"
                     onclick="window.location.href='../user/product_page.php'">
                 ← Continue Shopping
             </button>
 
             <button class="btn btn-warning"
+            style="background-color: white; color: black; border: 1px solid #ced4da;"
                     onclick="emptyCart()">
                 Empty Cart
             </button>
 
             <button class="btn btn-success"
+            style="background-color: #c453eaff; color: black; border: 1px solid white;"
                     onclick="window.location.href='checkout.php'">
                 Proceed to Checkout →
             </button>

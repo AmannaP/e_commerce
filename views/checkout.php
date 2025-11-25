@@ -1,201 +1,148 @@
 <?php
-session_start();
+require_once '../settings/core.php';
+requireLogin('../login/login.php');
 
-require_once "../controllers/cart_controller.php";
+// Check if cart is not empty
+require_once '../controllers/cart_controller.php';
+$customer_id = getUserId();
+$cart_items = get_user_cart_ctr($customer_id);
 
-// Get cart items
-$customer_id = isset($_SESSION['id']) ? $_SESSION['id'] : null;
-$ip_add = $_SERVER['REMOTE_ADDR'];
-$cart_items = get_user_cart_ctr($customer_id ?? $ip_add);
-
-// Calculate totals
-$subtotal = 0;
-foreach ($cart_items as $item) {
-    $subtotal += $item['product_price'] * $item['qty'];
+if (!$cart_items || count($cart_items) == 0) {
+    header('Location: cart.php');
+    exit();
 }
-
-$tax = $subtotal * 0.15;
-$shipping = 10.00;
-$total = $subtotal + $tax + $shipping;
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Checkout | GBVAid Store</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - GBVAid</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #c453eaff; }
+        
+        .navbar { background: linear-gradient(135deg, #000 0%, #fafafa 100%); padding: 20px 0; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05); }
+        .nav-container { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 40px; }
+        .logo { font-family: 'Cormorant Garamond', serif; font-size: 28px; background: linear-gradient(135deg, #c453eaff 0%, #ef4444 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+        
+        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        
+        .page-header { background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%); padding: 50px 40px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06); margin-bottom: 30px; position: relative; overflow: hidden; }
+        .page-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, #c453eaff 0%, #ef4444 50%, #c453eaff 100%); }
+        .page-title { font-family: 'Cormorant Garamond', serif; font-size: 42px; background: linear-gradient(135deg, #c453eaff 0%, #ef4444 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .checkout-section { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06); margin-bottom: 20px; }
+        
+        .summary-total { font-size: 32px; font-weight: 700; color: #c453eaff; padding: 20px 0; text-align: center; border-top: 2px solid #f3f4f6; border-bottom: 2px solid #f3f4f6; margin: 20px 0; }
+        
+        .btn { padding: 16px 40px; border: none; border-radius: 50px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.4s ease; text-decoration: none; display: inline-block; width: 100%; }
+        .btn-primary { background: linear-gradient(135deg, #c453eaff 0%, #ef4444 100%); color: white; box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 35px rgba(220, 38, 38, 0.4); }
+        .btn-secondary { background: white; color: #374151; border: 2px solid #e5e7eb; }
+        
+        /* Modal Styles */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
+        .modal-content { background: white; max-width: 500px; width: 90%; padding: 40px; border-radius: 20px; position: relative; transform: scale(0.9); transition: transform 0.3s ease; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        .modal-content::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, #c453eaff 0%, #ef4444 100%); border-radius: 20px 20px 0 0; }
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: #6b7280; }
+        .modal-close:hover { color: #c453eaff; }
+        .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; color: #1a1a1a; margin-bottom: 20px; text-align: center; }
+        .modal-buttons { display: flex; gap: 12px; margin-top: 30px; }
+        .modal-buttons button { flex: 1; }
+    </style>
 </head>
 <body>
-
-<div class="container my-5">
-    <h2 class="mb-4">Checkout</h2>
-
-    <?php if (empty($cart_items)): ?>
-        <div class="alert alert-warning">
-            Your cart is empty. <a href="../user/product_page.php">Continue Shopping</a>
-        </div>
-    <?php else: ?>
-
-        <div class="row">
-            <!-- Order Summary -->
-            <div class="col-md-8">
-                <div class="card mb-4">
-                    <div class="card-header bg-dark text-white">
-                        <h5 class="mb-0">Order Summary</h5>
-                    </div>
-                    <div class="card-body">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Price</th>
-                                    <th>Quantity</th>
-                                    <th>Subtotal</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($cart_items as $item): ?>
-                                <tr>
-                                    <td>
-                                        <img src="../uploads/products/<?= htmlspecialchars($item['product_image']) ?>" 
-                                             width="50" class="me-2">
-                                        <?= htmlspecialchars($item['product_title']) ?>
-                                    </td>
-                                    <td>GH₵ <?= number_format($item['product_price'], 2) ?></td>
-                                    <td><?= $item['qty'] ?></td>
-                                    <td>GH₵ <?= number_format($item['product_price'] * $item['qty'], 2) ?></td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Shipping Form -->
-                <div class="card">
-                    <div class="card-header bg-dark text-white">
-                        <h5 class="mb-0">Shipping Information</h5>
-                    </div>
-                    <div class="card-body">
-                        <!-- IMPORTANT: Make sure form has id="checkoutForm" -->
-                        <form id="checkoutForm" method="POST">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label>Full Name *</label>
-                                    <input type="text" name="full_name" class="form-control" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label>Phone *</label>
-                                    <input type="tel" name="phone" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label>Address *</label>
-                                <textarea name="address" class="form-control" rows="3" required></textarea>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label>City *</label>
-                                    <input type="text" name="city" class="form-control" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label>Region *</label>
-                                    <input type="text" name="region" class="form-control" required>
-                                </div>
-                            </div>
-                            
-                            <!-- Submit button inside the form -->
-                            <button type="submit" class="btn btn-success btn-lg w-100 mt-3">
-                                Place Order
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Price Summary -->
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header bg-dark text-white">
-                        <h5 class="mb-0">Price Details</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Subtotal:</span>
-                            <strong>GH₵ <?= number_format($subtotal, 2) ?></strong>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Tax (15%):</span>
-                            <strong>GH₵ <?= number_format($tax, 2) ?></strong>
-                        </div>
-                        <div class="d-flex justify-content-between mb-3">
-                            <span>Shipping:</span>
-                            <strong>GH₵ <?= number_format($shipping, 2) ?></strong>
-                        </div>
-                        <hr>
-                        <div class="d-flex justify-content-between mb-4">
-                            <h5>Total:</h5>
-                            <h5 class="text-success">GH₵ <?= number_format($total, 2) ?></h5>
-                        </div>
-
-                        <a href="cart.php" class="btn btn-outline-secondary w-100">
-                            Back to Cart
-                        </a>
-                    </div>
-                </div>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="../index.php" class="logo">GBVAid</a>
+            <div style="display: flex; gap: 20px;">
+                <a href="cart.php" style="color: #374151; text-decoration: none;">← Back to Cart</a>
             </div>
         </div>
+    </nav>
 
-    <?php endif; ?>
-</div>
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Checkout</h1>
+            <p style="color: #6b7280; font-size: 16px;">Review your order and complete payment</p>
+        </div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Checkout JavaScript -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("Checkout JavaScript loaded");
-    
-    const checkoutForm = document.getElementById('checkoutForm');
-    
-    if (!checkoutForm) {
-        console.error("ERROR: checkoutForm not found!");
-        return;
-    }
-    
-    checkoutForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        console.log("Form submitted!");
-        
-        const formData = new FormData(this);
-        const submitButton = this.querySelector('button[type="submit"]');
-        
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
-        
-        fetch('../actions/process_checkout_action.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            console.log("Response:", data);
+        <div class="checkout-section">
+            <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; margin-bottom: 20px;">Order Summary</h2>
+            <div id="checkoutItemsContainer"></div>
             
-            if (data.status === 'success') {
-                window.location.href = `payment_success.php?order_id=${data.order_id}&invoice=${data.invoice_no}&amount=${data.total_amount}&currency=${data.currency}`;
-            } else {
-                window.location.href = `payment_failed.php?error=${encodeURIComponent(data.message)}`;
-            }
-        })
-        .catch(err => {
-            console.error('Error:', err);
-            window.location.href = `payment_failed.php?error=${encodeURIComponent('An error occurred during checkout.')}`;
-        });
-    });
-});
-</script>
+            <div class="summary-total">
+                Total: <span id="checkoutTotal">GHc 0.00</span>
+            </div>
+            
+            <button onclick="showPaymentModal()" class="btn btn-primary">💳 Proceed to Payment</button>
+        </div>
+    </div>
 
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closePaymentModal()">&times;</span>
+            <h2 class="modal-title">Secure Payment via Paystack</h2>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <div style="font-size: 14px; color: #6b7280; margin-bottom: 10px;">Amount to Pay</div>
+                <div id="paymentAmount" style="font-size: 36px; font-weight: 700; color: #c453eaff;"></div>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #1f2937 0%, #374151 100%); color: white; padding: 20px; border-radius: 12px; margin: 20px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                <div style="font-size: 12px; margin-bottom: 10px; opacity: 0.8;">SECURED PAYMENT</div>
+                <div style="font-size: 18px; letter-spacing: 2px; margin-bottom: 15px;">🔒 Powered by Paystack</div>
+                <div style="font-size: 12px; opacity: 0.8;">Your payment information is 100% secure and encrypted</div>
+            </div>
+            
+            <p style="text-align: center; color: #6b7280; font-size: 13px; margin-bottom: 20px;">
+                You will be redirected to Paystack's secure payment gateway
+            </p>
+            
+            <div class="modal-buttons">
+                <button onclick="closePaymentModal()" class="btn btn-secondary">Cancel</button>
+                <button onclick="processCheckout()" id="confirmPaymentBtn" class="btn btn-primary">💳 Pay Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">🎉 Order Successful!</h2>
+            
+            <div style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px solid #6ee7b7;">
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <div style="font-size: 14px; color: #065f46; margin-bottom: 5px;">Invoice Number</div>
+                    <div id="successInvoice" style="font-size: 20px; font-weight: 700; color: #047857;"></div>
+                </div>
+                <div style="border-top: 1px solid rgba(6, 95, 70, 0.2); padding-top: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: #065f46;">
+                        <span>Total Paid:</span>
+                        <span style="font-weight: 600;" id="successAmount"></span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: #065f46;">
+                        <span>Date:</span>
+                        <span id="successDate"></span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 14px; color: #065f46;">
+                        <span>Items:</span>
+                        <span id="successItems"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <p style="text-align: center; color: #6b7280; margin-bottom: 25px;">Thank you for your order! Your items are being processed.</p>
+            
+            <div class="modal-buttons">
+                <button onclick="continueShopping()" class="btn btn-secondary">Continue Shopping</button>
+                <button onclick="viewOrders()" class="btn btn-primary">View Orders</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/checkout.js"></script>
 </body>
 </html>
