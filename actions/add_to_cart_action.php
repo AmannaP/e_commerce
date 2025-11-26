@@ -44,12 +44,13 @@ try {
     $p_id = intval($_POST['product_id']);
 
     // Check Login status
+    // Always get the IP address to satisfy database constraints
+    $ip_add = $_SERVER['REMOTE_ADDR'];
+
     if (isset($_SESSION['id']) && !empty($_SESSION['id'])) {
         $c_id = $_SESSION['id'];
-        $ip_add = null;
     } else {
         $c_id = null;
-        $ip_add = $_SERVER['REMOTE_ADDR'];
     }
 
     $qty = isset($_POST['qty']) ? intval($_POST['qty']) : 1;
