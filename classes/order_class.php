@@ -86,26 +86,31 @@ class order_class extends db_conn {
         }
     }
     
+    
     /**
-     * Get user orders
+     * Get all orders for a user (Fixed for Strict SQL Mode)
+     * @param int $customer_id - Customer ID
+     * @return array|false - Returns array of orders or false if failed
      */
     public function get_user_orders($customer_id) {
         try {
             $customer_id = (int)$customer_id;
             
+            // FIX: Added MAX() to p.amt and p.currency to satisfy ONLY_FULL_GROUP_BY
+            // Added o.invoice_no, o.order_date, etc to GROUP BY
             $sql = "SELECT 
                         o.order_id,
                         o.invoice_no,
                         o.order_date,
                         o.order_status,
-                        p.amt as total_amount,
-                        p.currency,
+                        MAX(p.amt) as total_amount,
+                        MAX(p.currency) as currency,
                         COUNT(od.product_id) as item_count
                     FROM orders o
                     LEFT JOIN payment p ON o.order_id = p.order_id
                     LEFT JOIN orderdetails od ON o.order_id = od.order_id
                     WHERE o.customer_id = $customer_id
-                    GROUP BY o.order_id
+                    GROUP BY o.order_id, o.invoice_no, o.order_date, o.order_status
                     ORDER BY o.order_date DESC, o.order_id DESC";
             
             return $this->db_fetch_all($sql);
@@ -114,7 +119,6 @@ class order_class extends db_conn {
             return false;
         }
     }
-    
     /**
      * Get order details
      */
