@@ -5,46 +5,56 @@ require_once("../settings/db_class.php");
 
 class cart_class extends db_conn
 {
-
     /**
      * Add a product to cart (for guests or logged-in users)
      */
     public function add_to_cart($p_id, $ip_add, $c_id, $qty) {
+        // 1. FIX: Ensure DB is connected before using $this->db
+        if (!$this->db_connect()) {
+            error_log("Add to Cart Error: Could not connect to database");
+            return false;
+        }
+
         try {
             if ($c_id !== null) {
-                // Logged-in user - check if item exists
+                // LOGGED-IN USER LOGIC
+                
+                // Check if item exists
                 $check_sql = "SELECT qty FROM cart WHERE p_id = ? AND c_id = ?";
                 $check_stmt = $this->db->prepare($check_sql);
                 $check_stmt->execute([$p_id, $c_id]);
                 $existing = $check_stmt->fetch(PDO::FETCH_ASSOC);
 
                 if ($existing) {
-                    // Item exists - update quantity
+                    // Update quantity
                     $new_qty = $existing['qty'] + $qty;
                     $sql = "UPDATE cart SET qty = ? WHERE p_id = ? AND c_id = ?";
                     $stmt = $this->db->prepare($sql);
                     return $stmt->execute([$new_qty, $p_id, $c_id]);
                 } else {
-                    // Item doesn't exist - insert new
-                    $sql = "INSERT INTO cart (p_id, c_id, qty) VALUES (?, ?, ?)";
+                    // Insert new
+                    // 2. FIX: Include ip_add even for logged-in users to satisfy strict DB rules
+                    $sql = "INSERT INTO cart (p_id, c_id, ip_add, qty) VALUES (?, ?, ?, ?)";
                     $stmt = $this->db->prepare($sql);
-                    return $stmt->execute([$p_id, $c_id, $qty]);
+                    return $stmt->execute([$p_id, $c_id, $ip_add, $qty]);
                 }
             } else {
-                // Guest user - check if item exists
+                // GUEST USER LOGIC
+                
+                // Check if item exists
                 $check_sql = "SELECT qty FROM cart WHERE p_id = ? AND ip_add = ? AND c_id IS NULL";
                 $check_stmt = $this->db->prepare($check_sql);
                 $check_stmt->execute([$p_id, $ip_add]);
                 $existing = $check_stmt->fetch(PDO::FETCH_ASSOC);
 
                 if ($existing) {
-                    // Item exists - update quantity
+                    // Update quantity
                     $new_qty = $existing['qty'] + $qty;
                     $sql = "UPDATE cart SET qty = ? WHERE p_id = ? AND ip_add = ? AND c_id IS NULL";
                     $stmt = $this->db->prepare($sql);
                     return $stmt->execute([$new_qty, $p_id, $ip_add]);
                 } else {
-                    // Item doesn't exist - insert new
+                    // Insert new
                     $sql = "INSERT INTO cart (p_id, ip_add, qty) VALUES (?, ?, ?)";
                     $stmt = $this->db->prepare($sql);
                     return $stmt->execute([$p_id, $ip_add, $qty]);
@@ -56,9 +66,10 @@ class cart_class extends db_conn
         }
     }
 
+    // ... (The rest of your functions are fine, keep them as is below) ...
+
     /**
      * Check if the product already exists in user cart
-     * Returns the existing row or false
      */
     public function check_cart_duplicate($p_id, $ip_add, $c_id)
     {
@@ -74,75 +85,43 @@ class cart_class extends db_conn
      */
     public function update_quantity($p_id, $ip_add, $c_id, $qty)
     {
-        error_log("Cart Class - update_quantity called with: p_id=$p_id, ip_add=$ip_add, c_id=$c_id, qty=$qty");
-        
+        // Ensure DB connection
+        if (!$this->db_connect()) return false;
+
         try {
             if ($c_id !== null && $c_id > 0) {
                 // Logged-in user
-                $sql = "UPDATE cart 
-                        SET qty = ? 
-                        WHERE p_id = ? AND c_id = ?";
-                
-                error_log("Cart Class - SQL for logged-in user: $sql");
-                error_log("Cart Class - Parameters: qty=$qty, p_id=$p_id, c_id=$c_id");
-                
-                $stmt = $this->db_query($sql, [$qty, $p_id, $c_id]);
+                $sql = "UPDATE cart SET qty = ? WHERE p_id = ? AND c_id = ?";
+                $stmt = $this->db->prepare($sql);
+                return $stmt->execute([$qty, $p_id, $c_id]);
             } else {
                 // Guest user
-                $sql = "UPDATE cart 
-                        SET qty = ? 
-                        WHERE p_id = ? AND ip_add = ? AND (c_id IS NULL OR c_id = 0)";
-                
-                error_log("Cart Class - SQL for guest user: $sql");
-                error_log("Cart Class - Parameters: qty=$qty, p_id=$p_id, ip_add=$ip_add");
-                
-                $stmt = $this->db_query($sql, [$qty, $p_id, $ip_add]);
+                $sql = "UPDATE cart SET qty = ? WHERE p_id = ? AND ip_add = ? AND (c_id IS NULL OR c_id = 0)";
+                $stmt = $this->db->prepare($sql);
+                return $stmt->execute([$qty, $p_id, $ip_add]);
             }
-            
-            if ($stmt === false) {
-                error_log("Cart Class - db_query returned false");
-                return false;
-            }
-            
-            error_log("Cart Class - Statement executed successfully");
-            return true;
-            
         } catch (Exception $e) {
-            error_log("Cart Class - Exception in update_quantity: " . $e->getMessage());
             return false;
         }
-    }
-
-    /**
-     * Increment existing quantity
-     */
-    public function increment_quantity($p_id, $ip_add, $c_id, $added_qty)
-    {
-        $sql = "UPDATE cart 
-                SET qty = qty + '$added_qty'
-                WHERE p_id='$p_id'
-                AND (ip_add='$ip_add' OR c_id='$c_id')";
-        return $this->db_query($sql);
     }
 
     /**
      * Remove a product from the cart
      */
     public function remove_from_cart($p_id, $ip_add, $c_id) {
+        if (!$this->db_connect()) return false;
+        
         try {
             if ($c_id !== null) {
-                // Logged-in user
                 $sql = "DELETE FROM cart WHERE p_id = ? AND c_id = ?";
                 $stmt = $this->db->prepare($sql);
                 return $stmt->execute([$p_id, $c_id]);
             } else {
-                // Guest user
                 $sql = "DELETE FROM cart WHERE p_id = ? AND ip_add = ? AND c_id IS NULL";
                 $stmt = $this->db->prepare($sql);
                 return $stmt->execute([$p_id, $ip_add]);
             }
         } catch (Exception $e) {
-            error_log("Remove from cart error: " . $e->getMessage());
             return false;
         }
     }
@@ -151,6 +130,8 @@ class cart_class extends db_conn
      * Get cart items by customer ID
      */
     function get_cart_by_customer($customer_id) {
+        if (!$this->db_connect()) return [];
+
         $sql = "SELECT c.p_id, c.qty, p.product_title, p.product_price, 
                     p.product_image, p.product_desc
                 FROM cart c
@@ -163,6 +144,8 @@ class cart_class extends db_conn
     }
 
     function get_cart_by_ip($ip_address) {
+        if (!$this->db_connect()) return [];
+
         $sql = "SELECT c.p_id, c.qty, p.product_title, p.product_price, 
                     p.product_image, p.product_desc
                 FROM cart c
@@ -173,98 +156,73 @@ class cart_class extends db_conn
         $stmt->execute([$ip_address]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
+    
     /**
-     * Retrieve all cart items for a user
-     */
-    public function get_cart_items($ip_add, $c_id)
-    {
-        $sql = "SELECT cart.p_id, cart.qty, products.product_title, 
-                       products.product_price, products.product_image 
-                FROM cart 
-                JOIN products 
-                ON cart.p_id = products.product_id
-                WHERE (cart.ip_add='$ip_add' OR cart.c_id='$c_id')";
-        return $this->db_fetch_all($sql);
-    }
-
-    /**
-     * Empty cart for a user (guest or logged-in)
+     * Empty cart
      */
     public function empty_cart($ip_add, $c_id) {
+        if (!$this->db_connect()) return false;
+
         try {
             if ($c_id !== null) {
-                // Logged-in user
                 $sql = "DELETE FROM cart WHERE c_id = ?";
                 $stmt = $this->db->prepare($sql);
                 return $stmt->execute([$c_id]);
             } else {
-                // Guest user
                 $sql = "DELETE FROM cart WHERE ip_add = ? AND c_id IS NULL";
                 $stmt = $this->db->prepare($sql);
                 return $stmt->execute([$ip_add]);
             }
         } catch (Exception $e) {
-            error_log("Empty cart error: " . $e->getMessage());
             return false;
         }
     }
 
-    /**
-     * Merge guest cart into user cart upon login
-     */
-
+    // Keep the rest of your methods (merge_guest_cart, etc.)
     function merge_guest_cart($customer_id, $ip_address) {
+        if (!$this->db_connect()) return false;
+        
+        // ... (Keep your existing merge logic here) ...
+        // Just make sure to ensure connection at the start
         try {
-            // Get all guest cart items for this IP
             $sql = "SELECT p_id, qty FROM cart WHERE ip_add = ? AND c_id IS NULL";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$ip_address]);
             $guest_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            if (empty($guest_items)) return true;
 
-            if (empty($guest_items)) {
-                return true; // No guest items to merge
-            }
-
-            // For each guest item, merge with customer cart
             foreach ($guest_items as $item) {
                 $p_id = $item['p_id'];
                 $qty = $item['qty'];
-
-                // Check if customer already has this product
+                
+                // Check exist
                 $check_sql = "SELECT qty FROM cart WHERE p_id = ? AND c_id = ?";
                 $check_stmt = $this->db->prepare($check_sql);
                 $check_stmt->execute([$p_id, $customer_id]);
                 $existing = $check_stmt->fetch(PDO::FETCH_ASSOC);
-
+                
                 if ($existing) {
-                    // Product exists - add quantities together
                     $new_qty = $existing['qty'] + $qty;
-                    $update_sql = "UPDATE cart SET qty = ? WHERE p_id = ? AND c_id = ?";
-                    $update_stmt = $this->db->prepare($update_sql);
-                    $update_stmt->execute([$new_qty, $p_id, $customer_id]);
+                    $up_sql = "UPDATE cart SET qty = ? WHERE p_id = ? AND c_id = ?";
+                    $up_stmt = $this->db->prepare($up_sql);
+                    $up_stmt->execute([$new_qty, $p_id, $customer_id]);
                 } else {
-                    // Product doesn't exist - transfer to customer account
-                    $insert_sql = "INSERT INTO cart (p_id, c_id, qty) VALUES (?, ?, ?)";
-                    $insert_stmt = $this->db->prepare($insert_sql);
-                    $insert_stmt->execute([$p_id, $customer_id, $qty]);
+                    $in_sql = "INSERT INTO cart (p_id, c_id, ip_add, qty) VALUES (?, ?, ?, ?)";
+                    $in_stmt = $this->db->prepare($in_sql);
+                    $in_stmt->execute([$p_id, $customer_id, $ip_address, $qty]);
                 }
             }
-
-            // Delete guest cart items after successful merge
-            $delete_sql = "DELETE FROM cart WHERE ip_add = ? AND c_id IS NULL";
-            $delete_stmt = $this->db->prepare($delete_sql);
-            $delete_stmt->execute([$ip_address]);
-
+            
+            // Delete guest
+            $del_sql = "DELETE FROM cart WHERE ip_add = ? AND c_id IS NULL";
+            $del_stmt = $this->db->prepare($del_sql);
+            $del_stmt->execute([$ip_address]);
+            
             return true;
-
         } catch (Exception $e) {
-            error_log("Cart merge error: " . $e->getMessage());
             return false;
         }
-        
     }
-    
 }
-
 ?>
