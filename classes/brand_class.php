@@ -20,7 +20,7 @@ class Brand extends db_conn {
     /**
      * Add a new brand (ensuring uniqueness)
      */
-    public function addBrand($brand_name, $cat_id) {
+    public function addBrand($brand_name, $cat_id, $user_id) {
         try {
             // Check if brand already exists
             $checkSql = "SELECT * FROM brands WHERE brand_name = ?";
@@ -34,9 +34,9 @@ class Brand extends db_conn {
                 ];
             }
 
-            $sql = "INSERT INTO brands (brand_name, cat_id) VALUES (?, ?)";
+            $sql = "INSERT INTO brands (brand_name, cat_id, created_by) VALUES (?, ?, ?)";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$brand_name, $cat_id]);
+            $stmt->execute([$brand_name, $cat_id, $user_id]);
 
             return [
                 "status" => "success",

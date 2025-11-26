@@ -9,9 +9,9 @@ function fetch_categories_ctr() {
 }
 
 // Add category
-function add_category_ctr($cat_name) {
+function add_category_ctr($cat_name, $user_id) {
     $category = new Category();
-    return $category->addCategory($cat_name);
+    return $category->addCategory($cat_name, $user_id);
 }
 
 // Update category

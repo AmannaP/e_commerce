@@ -1,3 +1,4 @@
 settings/db_cred.php
 settings/db_cred1.php
 uploads/
+settings/paystack_config.php

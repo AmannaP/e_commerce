@@ -1,17 +1,10 @@
 <?php
 // user/dashboard.php
-
 require_once '../settings/core.php';
 
 // Ensure user is logged in
 if (!checkLogin()) {
     header("Location: ../login/login.php");
-    exit();
-}
-
-// If the user is an admin, redirect to admin dashboard
-if (isAdmin()) {
-    header("Location: ../admin/dashboard.php");
     exit();
 }
 ?>
@@ -20,120 +13,151 @@ if (isAdmin()) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard | GBVAid Platform</title>
+    <title>Dashboard | GBVAid Support Platform</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body {
             background-color: #f8f9fa;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        .navbar {
+        
+        .dashboard-header {
             background-color: #c453eaff;
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 20px rgba(196, 83, 234, 0.2);
         }
-        .dashboard-card {
+
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             border: none;
-            border-radius: 12px;
+            border-radius: 15px;
             background: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            height: 100%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
-        .dashboard-card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(196, 83, 234, 0.15);
         }
-        .btn-custom {
-            background-color: #c453eaff;
-            color: white;
+
+        .icon-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
         }
-        .btn-custom:hover {
-            background-color: #e598ffff;
-            color: white;
-        }
-        h2 {
-            color: #c453eaff;
+
+        .btn-action {
+            border-radius: 50px;
+            padding: 8px 25px;
+            font-weight: 600;
+            width: 100%;
         }
     </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand fw-bold" href="#">GBVAid</a>
-    <div class="d-flex">
-        <span class="navbar-text text-white me-3">
-            Welcome, <?= htmlspecialchars($_SESSION['name']); ?> 💜
-        </span>
-        <a href="../login/logout.php" class="btn btn-outline-light btn-sm">Logout</a>
+<?php 
+if (file_exists('../includes/navbar.php')) {
+    include '../includes/navbar.php';
+} else {
+    include '../views/navbar.php';
+}
+?>
+
+<div class="dashboard-header text-center">
+    <div class="container">
+        <h2 class="fw-bold">Welcome, <?= htmlspecialchars($_SESSION['name']); ?></h2>
+        <p class="opacity-75">You are in a safe space. How can we support you today?</p>
     </div>
-  </div>
-</nav>
+</div>
 
-<!-- Main Content -->
-<div class="container mt-5">
-    <h2 class="fw-bold text-center mb-4">My GBVAid Dashboard</h2>
-    <p class="text-center text-muted mb-5">
-        Access support services, get help, and find safety through trusted organizations near you.
-    </p>
-
+<div class="container mb-5">
     <div class="row g-4 justify-content-center">
 
-        <!-- Report an Incident -->
         <div class="col-md-4">
-            <div class="card dashboard-card p-4 text-center">
-                <h5>📢 Report an Incident</h5>
-                <p>If you or someone you know is in danger or has experienced GBV, report it confidentially.</p>
-                <a href="#" class="btn btn-secondary w-100 disabled">Feature Coming Soon</a>
-<!--                <a href="/register_sample/user/report_incident.php" class="btn btn-custom mt-2">Report Now</a> -->
+            <div class="card card-hover p-4">
+                <div class="text-center">
+                    <div class="icon-circle mx-auto" style="background-color: #fee2e2; color: #c453eaff;">
+                        <i class="bi bi-megaphone-fill"></i>
+                    </div>
+                    <h5 class="fw-bold">Report an Incident</h5>
+                    <p class="text-muted small mb-4">If you or someone you know has experienced violence, report it securely and confidentially.</p>
+                    <a href="report_incident.php" class="btn btn-action" style="background-color: #c453eaff">Report Now</a>
+                </div>
             </div>
         </div>
 
-        <!-- Find Support Services -->
         <div class="col-md-4">
-            <div class="card dashboard-card p-4 text-center">
-                <h5>🤝 Find Support Services</h5>
-                <p>Browse available support services including counseling, legal aid, and shelters near you.</p>
-                <a href="../user/product_page.php" class="btn btn-custom mt-2">View Services</a>
+            <div class="card card-hover p-4">
+                <div class="text-center">
+                    <div class="icon-circle mx-auto" style="background-color: #d1fae5; color: #c453eaff;">
+                        <i class="bi bi-chat-heart-fill"></i>
+                    </div>
+                    <h5 class="fw-bold">Chat with a Counselor</h5>
+                    <p class="text-muted small mb-4">Connect with certified professionals for emotional and psychological support.</p>
+                    <a href="chat.php" class="btn btn-success btn-action" style="background-color: #c453eaff; border:none;">Start Chat</a>
+                </div>
             </div>
         </div>
 
-        <!-- Chat with Counselor -->
         <div class="col-md-4">
-            <div class="card dashboard-card p-4 text-center">
-                <h5>💬 Chat with a Counselor</h5>
-                <p>Get emotional or psychological support through our chat system with certified counselors.</p>
-                <a href="#" class="btn btn-secondary w-100 disabled">Feature Coming Soon</a>
-<!--                <a href="/register_sample/user/chat.php" class="btn btn-custom mt-2">Start Chat</a>  -->
+            <div class="card card-hover p-4">
+                <div class="text-center">
+                    <div class="icon-circle mx-auto" style="background-color: #e0f2fe; color: #c453eaff;">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h5 class="fw-bold">Safety Resources</h5>
+                    <p class="text-muted small mb-4">Access safety plans, legal rights information, and emergency contacts.</p>
+                    <a href="resources.php" class="btn btn-info btn-action text-white" style="background-color: #c453eaff; border:none;">View Resources</a>
+                </div>
             </div>
         </div>
 
-        <!-- Safety Resources -->
         <div class="col-md-4">
-            <div class="card dashboard-card p-4 text-center">
-                <h5>🛡️ Safety Resources</h5>
-                <p>Learn about protection strategies, emergency contacts, and community-based support.</p>
-                <a href="#" class="btn btn-secondary w-100 disabled">Feature Coming Soon</a>
-<!--                <a href="/register_sample/user/resources.php" class="btn btn-custom mt-2">Access Resources</a>  -->
+            <div class="card card-hover p-4">
+                <div class="text-center">
+                    <div class="icon-circle mx-auto" style="background-color: #f3e8ff; color: #c453eaff;">
+                        <i class="bi bi-box2-heart-fill"></i>
+                    </div>
+                    <h5 class="fw-bold">Support Services & Tools</h5>
+                    <p class="text-muted small mb-4">Browse legal aid, medical kits, and safety devices available for you.</p>
+                    <a href="product_page.php" class="btn btn-action text-white" style="background-color: #c453eaff;">Browse Services</a>
+                </div>
             </div>
         </div>
 
-        <!-- My Profile -->
         <div class="col-md-4">
-            <div class="card dashboard-card p-4 text-center">
-                <h5>👤 My Profile</h5>
-                <p>Update your profile, view your reports, and manage your preferences securely.</p>
-                <a href="#" class="btn btn-secondary w-100 disabled">Feature Coming Soon</a>
-<!--                <a href="/register_sample/user/profile.php" class="btn btn-custom mt-2">Manage Profile</a>  -->
+            <div class="card card-hover p-4">
+                <div class="text-center">
+                    <div class="icon-circle mx-auto" style="background-color: #f4f4f5; color: #c453eaff;">
+                        <i class="bi bi-person-lines-fill"></i>
+                    </div>
+                    <h5 class="fw-bold">My Profile</h5>
+                    <p class="text-muted small mb-4">Manage your personal details, view your incident history, and update settings.</p>
+                    <a href="profile.php" class="btn btn-secondary btn-action"style="background-color: #c453eaff;">Manage Profile</a>
+                </div>
             </div>
         </div>
 
-        <!-- Contact Support -->
         <div class="col-md-4">
-            <div class="card dashboard-card p-4 text-center">
-                <h5>📞 Contact Support</h5>
-                <p>Reach out to GBVAid’s help desk if you need immediate assistance or follow-up.</p>
-                <a href="#" class="btn btn-secondary w-100 disabled">Feature Coming Soon</a>
-<!--                <a href="/register_sample/user/support.php" class="btn btn-custom mt-2">Contact Us</a>  -->
+            <div class="card card-hover p-4">
+                <div class="text-center">
+                    <div class="icon-circle mx-auto" style="background-color: #fff7ed; color: #c453eaff;">
+                        <i class="bi bi-headset"></i>
+                    </div>
+                    <h5 class="fw-bold">Contact Help Desk</h5>
+                    <p class="text-muted small mb-4">Need technical assistance or have a question? Our team is here to help.</p>
+                    <a href="contact.php" class="btn btn-warning btn-action text-white" style="background-color: #c453eaff; border:none;">Contact Us</a>
+                </div>
             </div>
         </div>
 
@@ -144,5 +168,6 @@ if (isAdmin()) {
     <small>© <?= date('Y'); ?> GBVAid — Empowering safety and support for all.</small>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

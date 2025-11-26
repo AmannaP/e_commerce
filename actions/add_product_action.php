@@ -69,7 +69,8 @@ $result = add_product_ctr(
     $price,
     $description,
     $product_image,
-    $keywords
+    $keywords,
+    $user_id
 );
 
 

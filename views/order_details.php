@@ -6,7 +6,7 @@ date_default_timezone_set('Africa/Accra');
 
 // Check if user is logged in
 if (!isset($_SESSION['id'])) {
-    header("Location: ../user/login.php");
+    header("Location: ../login/login.php");
     exit();
 }
 
@@ -115,8 +115,8 @@ $total = $subtotal + $tax + $shipping;
 <body>
 
 <?php 
-if (file_exists('includes/navbar.php')) {
-    include 'includes/navbar.php';
+if (file_exists('views/navbar.php')) {
+    include 'views/navbar.php';
 }
 ?>
 
@@ -265,7 +265,7 @@ if (file_exists('includes/navbar.php')) {
                     <h6 class="mt-3">Need Help?</h6>
                     <p class="text-muted small mb-3">Contact our support team</p>
                     
-                    <a href="contact.php" class="btn btn-sm" style="background-color: #c453eaff; color: white;">
+                    <a href="../views/contact.php" class="btn btn-sm" style="background-color: #c453eaff; color: white;">
                         Contact Support
                     </a>
                 </div>

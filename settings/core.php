@@ -62,6 +62,13 @@ function getUserId() {
 }
 
 /**
+ * Get logged in user email
+ */
+function getUserEmail(){
+    return isset($_SESSION['name']) ? $_SESSION['name'] : null;
+}
+
+/**
  * Get logged-in user role
  * @return string|null
  */

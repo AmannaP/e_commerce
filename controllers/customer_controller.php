@@ -16,4 +16,10 @@ function login_customer_ctr($email, $password) {
     }
     return ["success" => false, "message" => "Invalid email or password"];
 }
+
+function get_customer_ctr($customer_id)
+{
+    $customer = new Customer();
+    return $customer->get_customer($customer_id);
+}
 ?>

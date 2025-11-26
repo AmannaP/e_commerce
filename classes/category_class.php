@@ -12,11 +12,11 @@ class Category extends db_conn {
     }
 
     // Add category
-    public function addCategory($cat_name) {
+    public function addCategory($cat_name, $user_id) {
         try {
-            $sql = "INSERT INTO categories (cat_name) VALUES (?)";
+            $sql = "INSERT INTO categories (cat_name, created_by) VALUES (?, ?)";
             $stmt = $this->db->prepare($sql);
-            return $stmt->execute([$cat_name]);
+            return $stmt->execute([$cat_name, $user_id]);
         } catch (PDOException $e) {
             return false; // likely duplicate name
         }

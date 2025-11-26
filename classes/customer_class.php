@@ -18,5 +18,14 @@ class Customer extends db_conn {
         }
         return false;
     }
+
+    /**
+     * Get customer details by ID
+     */
+    public function get_customer($customer_id)
+    {
+        $sql = "SELECT * FROM customer WHERE customer_id = '$customer_id'";
+        return $this->db_fetch_one($sql);
+    }
 }
 ?>
