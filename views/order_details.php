@@ -265,7 +265,7 @@ if (file_exists('views/navbar.php')) {
                     <h6 class="mt-3">Need Help?</h6>
                     <p class="text-muted small mb-3">Contact our support team</p>
                     
-                    <a href="../views/contact.php" class="btn btn-sm" style="background-color: #c453eaff; color: white;">
+                    <a href="../user/contact.php" class="btn btn-sm" style="background-color: #c453eaff; color: white;">
                         Contact Support
                     </a>
                 </div>
