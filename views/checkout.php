@@ -18,131 +18,304 @@ if (!$cart_items || count($cart_items) == 0) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - GBVAid</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #c453eaff; }
+        /* 1. Purple Background */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #c453eaff; 
+            min-height: 100vh;
+        }
         
-        .navbar { background: linear-gradient(135deg, #000 0%, #fafafa 100%); padding: 20px 0; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05); }
-        .nav-container { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 40px; }
-        .logo { font-family: 'Cormorant Garamond', serif; font-size: 28px; background: linear-gradient(135deg, #c453eaff 0%, #ef4444 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+        /* 2. Navbar Styling (White) */
+        .navbar { 
+            background: white; 
+            padding: 15px 0; 
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); 
+        }
+        .logo { 
+            font-family: 'Segoe UI', serif; 
+            font-weight: bold;
+            font-size: 26px; 
+            color: #c453eaff; 
+            text-decoration: none; 
+        }
+        .nav-link-custom {
+            color: #555;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        .nav-link-custom:hover {
+            color: #c453eaff;
+        }
         
-        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        /* 3. Checkout Container (White Card) */
+        .checkout-card { 
+            background: white; 
+            border-radius: 15px; 
+            padding: 40px; 
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); 
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
         
-        .page-header { background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%); padding: 50px 40px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06); margin-bottom: 30px; position: relative; overflow: hidden; }
-        .page-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, #c453eaff 0%, #ef4444 50%, #c453eaff 100%); }
-        .page-title { font-family: 'Cormorant Garamond', serif; font-size: 42px; background: linear-gradient(135deg, #c453eaff 0%, #ef4444 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .page-title {
+            color: white;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
         
-        .checkout-section { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06); margin-bottom: 20px; }
+        .section-header {
+            border-bottom: 2px solid #e598ffff;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            color: #333;
+            font-weight: 700;
+        }
         
-        .summary-total { font-size: 32px; font-weight: 700; color: #c453eaff; padding: 20px 0; text-align: center; border-top: 2px solid #f3f4f6; border-bottom: 2px solid #f3f4f6; margin: 20px 0; }
+        /* 4. Order Summary Styles */
+        .checkout-item {
+            transition: background-color 0.2s;
+        }
+        .checkout-item:hover {
+            background-color: #f9f9f9;
+        }
         
-        .btn { padding: 16px 40px; border: none; border-radius: 50px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.4s ease; text-decoration: none; display: inline-block; width: 100%; }
-        .btn-primary { background: linear-gradient(135deg, #c453eaff 0%, #ef4444 100%); color: white; box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3); }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 35px rgba(220, 38, 38, 0.4); }
-        .btn-secondary { background: white; color: #374151; border: 2px solid #e5e7eb; }
+        .summary-total-container { 
+            background-color: #f3e8ff; /* Light purple bg */
+            border: 1px solid #e598ffff;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: right;
+            margin: 30px 0; 
+        }
         
-        /* Modal Styles */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
-        .modal-content { background: white; max-width: 500px; width: 90%; padding: 40px; border-radius: 20px; position: relative; transform: scale(0.9); transition: transform 0.3s ease; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-        .modal-content::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, #c453eaff 0%, #ef4444 100%); border-radius: 20px 20px 0 0; }
-        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: #6b7280; }
-        .modal-close:hover { color: #c453eaff; }
-        .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; color: #1a1a1a; margin-bottom: 20px; text-align: center; }
-        .modal-buttons { display: flex; gap: 12px; margin-top: 30px; }
-        .modal-buttons button { flex: 1; }
+        .total-label {
+            font-size: 16px;
+            color: #555;
+        }
+        
+        .total-amount {
+            font-size: 32px; 
+            font-weight: 800; 
+            color: #c453eaff; 
+        }
+        
+        /* 5. Buttons */
+        .btn-purple { 
+            background-color: #c453eaff; 
+            color: white; 
+            border: 2px solid #c453eaff; 
+            padding: 12px 30px;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        .btn-purple:hover { 
+            background-color: white; 
+            color: #c453eaff; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .btn-secondary-custom {
+            background: white;
+            color: #555;
+            border: 2px solid #eee;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+        .btn-secondary-custom:hover {
+            border-color: #c453eaff;
+            color: #c453eaff;
+        }
+        
+        /* 6. Modals */
+        .modal { 
+            background: rgba(0,0,0,0.6); 
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content { 
+            border-radius: 20px; 
+            border: none;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3); 
+        }
+        
+        .modal-header {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        
+        .secure-badge {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-container">
+
+    <nav class="navbar fixed-top">
+        <div class="container">
             <a href="../index.php" class="logo">GBVAid</a>
-            <div style="display: flex; gap: 20px;">
-                <a href="cart.php" style="color: #374151; text-decoration: none;">← Back to Cart</a>
-            </div>
+            <a href="cart.php" class="nav-link-custom">
+                <i class="bi bi-arrow-left me-1"></i> Back to Cart
+            </a>
         </div>
     </nav>
 
-    <div class="container">
-        <div class="page-header">
-            <h1 class="page-title">Checkout</h1>
-            <p style="color: #6b7280; font-size: 16px;">Review your order and complete payment</p>
+    <div class="container" style="margin-top: 100px;">
+        <div class="mb-4">
+            <h2 class="page-title"><i class="bi bi-credit-card me-2"></i>Checkout</h2>
+            <p style="color: rgba(255,255,255,0.8);">Review your order and complete payment securely</p>
         </div>
 
-        <div class="checkout-section">
-            <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; margin-bottom: 20px;">Order Summary</h2>
-            <div id="checkoutItemsContainer"></div>
+        <div class="checkout-card">
+            <h4 class="section-header">Order Summary</h4>
             
-            <div class="summary-total">
-                Total: <span id="checkoutTotal">GHc 0.00</span>
-            </div>
-            
-            <button onclick="showPaymentModal()" class="btn btn-primary">💳 Proceed to Payment</button>
-        </div>
-    </div>
-
-    <!-- Payment Modal -->
-    <div id="paymentModal" class="modal">
-        <div class="modal-content">
-            <span class="modal-close" onclick="closePaymentModal()">&times;</span>
-            <h2 class="modal-title">Secure Payment via Paystack</h2>
-            
-            <div style="text-align: center; margin: 30px 0;">
-                <div style="font-size: 14px; color: #6b7280; margin-bottom: 10px;">Amount to Pay</div>
-                <div id="paymentAmount" style="font-size: 36px; font-weight: 700; color: #c453eaff;"></div>
-            </div>
-            
-            <div style="background: linear-gradient(135deg, #1f2937 0%, #374151 100%); color: white; padding: 20px; border-radius: 12px; margin: 20px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-                <div style="font-size: 12px; margin-bottom: 10px; opacity: 0.8;">SECURED PAYMENT</div>
-                <div style="font-size: 18px; letter-spacing: 2px; margin-bottom: 15px;">🔒 Powered by Paystack</div>
-                <div style="font-size: 12px; opacity: 0.8;">Your payment information is 100% secure and encrypted</div>
-            </div>
-            
-            <p style="text-align: center; color: #6b7280; font-size: 13px; margin-bottom: 20px;">
-                You will be redirected to Paystack's secure payment gateway
-            </p>
-            
-            <div class="modal-buttons">
-                <button onclick="closePaymentModal()" class="btn btn-secondary">Cancel</button>
-                <button onclick="processCheckout()" id="confirmPaymentBtn" class="btn btn-primary">💳 Pay Now</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Success Modal -->
-    <div id="successModal" class="modal">
-        <div class="modal-content">
-            <h2 class="modal-title">🎉 Order Successful!</h2>
-            
-            <div style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px solid #6ee7b7;">
-                <div style="text-align: center; margin-bottom: 15px;">
-                    <div style="font-size: 14px; color: #065f46; margin-bottom: 5px;">Invoice Number</div>
-                    <div id="successInvoice" style="font-size: 20px; font-weight: 700; color: #047857;"></div>
-                </div>
-                <div style="border-top: 1px solid rgba(6, 95, 70, 0.2); padding-top: 15px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: #065f46;">
-                        <span>Total Paid:</span>
-                        <span style="font-weight: 600;" id="successAmount"></span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: #065f46;">
-                        <span>Date:</span>
-                        <span id="successDate"></span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 14px; color: #065f46;">
-                        <span>Items:</span>
-                        <span id="successItems"></span>
+            <div id="checkoutItemsContainer">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-purple" role="status" style="color: #c453eaff;">
+                        <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
             </div>
             
-            <p style="text-align: center; color: #6b7280; margin-bottom: 25px;">Thank you for your order! Your items are being processed.</p>
+            <div class="summary-total-container">
+                <span class="total-label">Total Amount to Pay:</span><br>
+                <span id="checkoutTotal" class="total-amount">GH₵ 0.00</span>
+            </div>
             
-            <div class="modal-buttons">
-                <button onclick="continueShopping()" class="btn btn-secondary">Continue Shopping</button>
-                <button onclick="viewOrders()" class="btn btn-primary">View Orders</button>
+            <button onclick="showPaymentModal()" class="btn btn-purple btn-lg">
+                <i class="bi bi-lock-fill me-2"></i> Proceed to Secure Payment
+            </button>
+        </div>
+    </div>
+
+    <div id="paymentModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Secure Payment</h5>
+                    <button type="button" class="btn-close" onclick="closePaymentModal()"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="text-center mb-4">
+                        <small class="text-muted">TOTAL AMOUNT</small>
+                        <div id="paymentAmount" style="font-size: 36px; font-weight: 800; color: #c453eaff;"></div>
+                    </div>
+                    
+                    <div class="secure-badge">
+                        <div class="fw-bold mb-1"><i class="bi bi-shield-lock-fill text-success me-1"></i> SSL SECURED PAYMENT</div>
+                        <small class="text-muted">Powered by Paystack. Your data is encrypted.</small>
+                    </div>
+                    
+                    <p class="text-center text-muted small mb-4">
+                        You will be redirected to Paystack to complete your purchase using Card or Mobile Money.
+                    </p>
+                    
+                    <div class="d-grid gap-2">
+                        <button onclick="processCheckout()" id="confirmPaymentBtn" class="btn btn-purple">
+                            Pay Now
+                        </button>
+                        <button onclick="closePaymentModal()" class="btn btn-light text-muted">Cancel</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <div id="successModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body p-5 text-center">
+                    <div style="font-size: 60px; color: #10b981; margin-bottom: 20px;">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <h2 class="fw-bold mb-3">Order Successful!</h2>
+                    
+                    <div class="bg-light p-3 rounded mb-4 border">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Invoice:</span>
+                            <span id="successInvoice" class="fw-bold text-dark"></span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Amount:</span>
+                            <span id="successAmount" class="fw-bold text-success"></span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Date:</span>
+                            <span id="successDate"></span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-muted mb-4">Thank you for your order! Your items are being processed.</p>
+                    
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button onclick="continueShopping()" class="btn btn-secondary-custom">Shop More</button>
+                        <button onclick="viewOrders()" class="btn btn-purple" style="width: auto;">View Orders</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script src="../js/checkout.js"></script>
+    
+    <script>
+        // Store original functions
+        const originalShowPayment = window.showPaymentModal;
+        const originalClosePayment = window.closePaymentModal;
+        const originalShowSuccess = window.showSuccessModal;
+
+        // Bootstrap Modal Instances
+        let paymentModalBS;
+        let successModalBS;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            paymentModalBS = new bootstrap.Modal(document.getElementById('paymentModal'));
+            successModalBS = new bootstrap.Modal(document.getElementById('successModal'));
+        });
+
+        // Override to use Bootstrap
+        window.showPaymentModal = function() {
+            // Update amount text first (logic from original JS)
+            const amountDisplay = document.getElementById('paymentAmount');
+            if (amountDisplay) {
+                amountDisplay.textContent = `GH₵ ${window.checkoutTotal || '0.00'}`;
+            }
+            paymentModalBS.show();
+        };
+
+        window.closePaymentModal = function() {
+            paymentModalBS.hide();
+        };
+
+        window.showSuccessModal = function(orderData) {
+            // Populate data (logic from original JS)
+            const invoiceEl = document.getElementById('successInvoice');
+            const amountEl = document.getElementById('successAmount');
+            const dateEl = document.getElementById('successDate');
+            
+            if (invoiceEl) invoiceEl.textContent = orderData.invoice_no || 'N/A';
+            if (amountEl) amountEl.textContent = `GH₵ ${orderData.total_amount || '0.00'}`;
+            if (dateEl) dateEl.textContent = orderData.order_date || new Date().toLocaleString();
+            
+            successModalBS.show();
+            
+            // Trigger confetti if function exists
+            if (typeof createConfetti === 'function') createConfetti();
+        };
+    </script>
 </body>
 </html>

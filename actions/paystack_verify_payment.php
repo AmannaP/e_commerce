@@ -39,7 +39,7 @@ try {
     }
 
     // Payment details from Paystack
-    $amount_paid = $verify_response['data']['amount'] / 100; // Convert kobo/pesewas to main currency
+    $amount_paid = $verify_response['data']['amount'] / 100; // Convert pesewas to main currency
     $currency = $verify_response['data']['currency'];
     $payment_date = date("Y-m-d H:i:s"); // Current Ghana time
     $auth_code = $verify_response['data']['authorization']['authorization_code'] ?? null;
@@ -59,7 +59,7 @@ try {
     // 4. CREATE ORDER
     $order = new order_class();
     $invoice_no = 'INV-' . strtoupper(uniqid());
-    $order_status = 'Pending'; // Or 'Paid' depending on your logic
+    $order_status = 'Completed';
 
     $order_id = $order->create_order($customer_id, $invoice_no, $payment_date, $order_status);
 

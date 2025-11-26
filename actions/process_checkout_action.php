@@ -53,7 +53,7 @@ try {
     // Generate order details
     $invoice_no = uniqid("INV");
     $order_date = date('Y-m-d H:i:s');
-    $order_status = 'Pending';
+    $order_status = 'Completed';
     $payment_date = date('Y-m-d H:i:s');
 
     error_log("Checkout - Total amount: $total_amount");

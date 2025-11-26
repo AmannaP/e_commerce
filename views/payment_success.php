@@ -2,6 +2,9 @@
 require_once '../settings/core.php';
 require_once '../controllers/order_controller.php';
 
+// 1. Set Timezone to Ghana
+date_default_timezone_set('Africa/Accra');
+
 requireLogin('../login/login.php');
 
 $customer_id = getUserId();
@@ -14,28 +17,63 @@ $reference = isset($_GET['reference']) ? htmlspecialchars($_GET['reference']) : 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Successful - GBVAid</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #ffffff; }
         
-        .navbar { background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%); padding: 20px 0; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05); }
-        .nav-container { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 40px; }
-        .logo { font-family: 'Cormorant Garamond', serif; font-size: 28px; background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+        /* 1. Purple Background */
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #c453eaff; 
+            min-height: 100vh;
+        }
         
-        .container { max-width: 900px; margin: 60px auto; padding: 0 20px; }
+        /* Navbar Styling */
+        .navbar { 
+            background: black; 
+            padding: 20px 0; 
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); 
+        }
+        .nav-container { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 0 40px; 
+        }
+        .logo { 
+            font-family: 'Segoe UI', serif; 
+            font-weight: bold;
+            font-size: 28px; 
+            color: #c453eaff; 
+            text-decoration: none; 
+        }
+        .nav-link {
+            color: #c453eaff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
         
+        .container { max-width: 700px; margin: 60px auto; padding: 0 20px; }
+        
+        /* 2. Success Box (White Card) */
         .success-box { 
-            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); 
-            border: 2px solid #6ee7b7; 
+            background: white; 
             border-radius: 20px; 
             padding: 50px 40px; 
             text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
         
         .success-icon { 
             font-size: 80px; 
             margin-bottom: 20px; 
             animation: bounce 1s ease-in-out;
+            color: #c453eaff;
         }
         
         @keyframes bounce {
@@ -44,32 +82,32 @@ $reference = isset($_GET['reference']) ? htmlspecialchars($_GET['reference']) : 
         }
         
         h1 { 
-            font-family: 'Cormorant Garamond', serif; 
-            font-size: 3rem; 
-            color: #065f46; 
+            font-family: 'Segoe UI', serif; 
+            font-size: 2.5rem; 
+            color: #c453eaff; 
             margin-bottom: 10px; 
         }
         
         .subtitle { 
             font-size: 18px; 
-            color: #047857; 
+            color: #6b7280; 
             margin-bottom: 30px; 
         }
         
         .order-details { 
-            background: white; 
+            background: #f9fafb; 
             padding: 30px; 
             border-radius: 12px; 
             margin: 30px 0; 
             text-align: left;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
         }
         
         .detail-row { 
             display: flex; 
             justify-content: space-between; 
             padding: 12px 0; 
-            border-bottom: 1px solid #f3f4f6;
+            border-bottom: 1px solid #e5e7eb;
             color: #374151;
         }
         
@@ -77,52 +115,59 @@ $reference = isset($_GET['reference']) ? htmlspecialchars($_GET['reference']) : 
         .detail-label { font-weight: 600; }
         .detail-value { color: #6b7280; word-break: break-all; }
         
+        /* 3. Buttons */
         .btn { 
-            padding: 16px 40px; 
+            padding: 14px 30px; 
             border: none; 
             border-radius: 50px; 
             font-size: 16px; 
             font-weight: 600; 
             cursor: pointer; 
-            transition: all 0.4s ease; 
+            transition: all 0.3s ease; 
             text-decoration: none; 
             display: inline-block;
-            margin: 0 10px;
+            margin: 10px;
         }
         
         .btn-primary { 
-            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); 
+            background-color: #c453eaff; 
             color: white; 
-            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3); 
+            border: 2px solid #c453eaff;
+            box-shadow: 0 4px 15px rgba(196, 83, 234, 0.4); 
         }
         
         .btn-primary:hover { 
-            transform: translateY(-2px); 
-            box-shadow: 0 12px 35px rgba(220, 38, 38, 0.4); 
+            background-color: white; 
+            color: #c453eaff;
+            transform: translateY(-2px);
         }
         
         .btn-secondary { 
             background: white; 
-            color: #374151; 
-            border: 2px solid #e5e7eb; 
+            color: #c453eaff; 
+            border: 2px solid #c453eaff; 
         }
         
-        .btn-secondary:hover { background: #f9fafb; }
+        .btn-secondary:hover { 
+            background: #f3e8ff; 
+        }
         
         .buttons-container { 
             display: flex; 
             justify-content: center; 
-            margin-top: 40px; 
+            margin-top: 30px; 
             flex-wrap: wrap;
         }
         
+        /* 4. Confirmation Message */
         .confirmation-message { 
-            background: #eff6ff; 
-            border: 2px solid #3b82f6; 
+            background: #f3e8ff; 
+            border: 1px solid #d8b4fe; 
             padding: 20px; 
             border-radius: 12px; 
-            color: #1e40af;
+            color: #7e22ce;
             margin-bottom: 20px;
+            font-size: 15px;
         }
     </style>
 </head>
@@ -131,7 +176,7 @@ $reference = isset($_GET['reference']) ? htmlspecialchars($_GET['reference']) : 
         <div class="nav-container">
             <a href="../index.php" class="logo">GBVAid</a>
             <div style="display: flex; gap: 20px;">
-                <a href="../user/product_page.php" style="color: #374151; text-decoration: none;">← Continue Shopping</a>
+                <a href="../user/product_page.php" class="nav-link">← Continue Shopping</a>
             </div>
         </div>
     </nav>
@@ -143,14 +188,14 @@ $reference = isset($_GET['reference']) ? htmlspecialchars($_GET['reference']) : 
             <p class="subtitle">Your payment has been processed successfully</p>
             
             <div class="confirmation-message">
-                <strong>✓ Payment Confirmed</strong><br>
+                <strong><i class="bi bi-check-circle-fill"></i> Payment Confirmed</strong><br>
                 Thank you for your purchase! Your order has been confirmed and will be processed shortly.
             </div>
             
             <div class="order-details">
                 <div class="detail-row">
                     <span class="detail-label">Invoice Number</span>
-                    <span class="detail-value"><?php echo $invoice_no; ?></span>
+                    <span class="detail-value" style="color: #c453eaff; font-weight: bold;"><?php echo $invoice_no; ?></span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Payment Reference</span>
@@ -158,11 +203,11 @@ $reference = isset($_GET['reference']) ? htmlspecialchars($_GET['reference']) : 
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Order Date</span>
-                    <span class="detail-value"><?php echo date('F j, Y'); ?></span>
+                    <span class="detail-value"><?php echo date('F j, Y - h:i A'); ?></span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Status</span>
-                    <span class="detail-value" style="color: #059669; font-weight: 600;">Paid ✓</span>
+                    <span class="detail-value" style="color: #10b981; font-weight: 600;">Paid <i class="bi bi-check-lg"></i></span>
                 </div>
             </div>
             
@@ -174,25 +219,29 @@ $reference = isset($_GET['reference']) ? htmlspecialchars($_GET['reference']) : 
     </div>
 
     <script>
-        // Confetti effect
+        // Confetti effect (Updated colors for Purple Theme)
         function createConfetti() {
-            const colors = ['#dc2626', '#ef4444', '#10b981', '#3b82f6', '#f59e0b'];
-            const confettiCount = 50;
+            // Purple, Dark Purple, White, Gold, Green
+            const colors = ['#c453eaff', '#a020f0', '#ffffff', '#ffd700', '#10b981'];
+            const confettiCount = 60;
             
             for (let i = 0; i < confettiCount; i++) {
                 setTimeout(() => {
                     const confetti = document.createElement('div');
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    
                     confetti.style.cssText = `
                         position: fixed;
                         width: 10px;
                         height: 10px;
-                        background: ${colors[Math.floor(Math.random() * colors.length)]};
+                        background: ${color};
                         left: ${Math.random() * 100}%;
                         top: -10px;
                         opacity: 1;
                         transform: rotate(${Math.random() * 360}deg);
                         z-index: 10001;
                         pointer-events: none;
+                        border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
                     `;
                     
                     document.body.appendChild(confetti);
@@ -206,10 +255,11 @@ $reference = isset($_GET['reference']) ? htmlspecialchars($_GET['reference']) : 
                         
                         if (progress < 1) {
                             const top = progress * (window.innerHeight + 50);
-                            const wobble = Math.sin(progress * 10) * 50;
+                            // Add horizontal sway
+                            const wobble = Math.sin(progress * 10) * 30;
                             
                             confetti.style.top = top + 'px';
-                            confetti.style.left = `calc(${confetti.style.left} + ${wobble}px)`;
+                            confetti.style.left = `calc(${parseFloat(confetti.style.left)}% + ${wobble}px)`;
                             confetti.style.opacity = 1 - progress;
                             confetti.style.transform = `rotate(${progress * 720}deg)`;
                             
